@@ -1,16 +1,19 @@
-# new_qi_apps
+v 1. Perbaiki method get url mengikutkan token. Token belum bisa diambil dari local db
+v 4. Habis dari register, belum bisa pindah ke login
 
-A new Flutter project.
+2. Firebase push notif.
 
-## Getting Started
+3. Flutter chart get respon dari API
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<!-- Client -->
+Client Request Fcm Token
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+API utk simpan fcm token users
+
+
+Subscribe Topic
+
+Client, subscribe topic "umum"
+Backend, kirim notifikasi utk topic "umum", title x, body y

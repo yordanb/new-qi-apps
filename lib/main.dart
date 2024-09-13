@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:new_qi_apps/auth/db_service.dart';
 //import 'package:new_qi_apps/pages/home.dart';
 //import 'package:new_qi_apps/pages/mainMenu.dart';
 
 import 'animation/splash_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DBService.init();
   runApp(const MyApp());
 }
 

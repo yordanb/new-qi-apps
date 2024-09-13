@@ -407,6 +407,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:android_id/android_id.dart';
+import 'package:new_qi_apps/auth/login_page.dart';
 import '../component/my_button.dart';
 import '../component/my_textfield.dart';
 import '../config/config.dart';
@@ -431,7 +432,7 @@ class RegisterPage extends StatelessWidget {
 
     // Get Android ID
     const androidIdPlugin = AndroidId();
-    final String? androidId = await androidIdPlugin.getId();
+    String? androidId = await androidIdPlugin.getId();
 
     // Prepare data to be sent in JSON format
     final Map<String, dynamic> data = {
@@ -450,6 +451,7 @@ class RegisterPage extends StatelessWidget {
         body: json.encode(data),
       );
       print(data);
+      print(response.statusCode);
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -467,15 +469,38 @@ class RegisterPage extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Registration Successful!')),
           );
-          Navigator.pushReplacementNamed(
-              context, '/login'); // Navigasi ke halaman login
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const LoginPage(
+                      isAlreadyRegistered: true,
+                    )),
+          );
         } else {
           // Handle unknown errors
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const LoginPage(
+                      isAlreadyRegistered: true,
+                    )),
+          );
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Registration Failed!')),
           );
         }
       } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const LoginPage(
+                    isAlreadyRegistered: true,
+                  )),
+        );
+
         // Handle HTTP errors
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Registration Failed!')),
@@ -484,7 +509,7 @@ class RegisterPage extends StatelessWidget {
     } catch (e) {
       // Handle exceptions
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred!')),
+        SnackBar(content: Text("$e")),
       );
     }
   }

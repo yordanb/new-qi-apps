@@ -333,7 +333,11 @@ import 'register_page.dart'; // Import halaman registrasi
 import 'package:android_id/android_id.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  final bool isAlreadyRegistered;
+  const LoginPage({
+    super.key,
+    this.isAlreadyRegistered = false,
+  });
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -352,7 +356,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _getAndroidID();
+    if (widget.isAlreadyRegistered == false) _getAndroidID();
   }
 
 // Mendapatkan AndroidID perangkat menggunakan android_id plugin
@@ -360,35 +364,17 @@ class _LoginPageState extends State<LoginPage> {
     const androidIdPlugin = AndroidId();
     String? androidID = await androidIdPlugin.getId(); // Mendapatkan AndroidID
 
-    if (androidID != null) {
-      setState(() {
-        this.androidID = androidID; // Simpan AndroidID
-      });
+    setState(() {
+      this.androidID = androidID!; // Simpan AndroidID
+    });
 
-      // Cek apakah AndroidID sudah terdaftar
-      bool isRegistered = await AuthService().checkAndroidID(androidID);
-      if (!isRegistered) {
-        // Jika AndroidID belum terdaftar, arahkan ke halaman registrasi
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => RegisterPage()),
-        );
-      }
-    } else {
-      // Penanganan jika gagal mendapatkan AndroidID
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: const Text('Failed to retrieve AndroidID.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+    // Cek apakah AndroidID sudah terdaftar
+    bool isRegistered = await AuthService().checkAndroidID(androidID!);
+    if (!isRegistered) {
+      // Jika AndroidID belum terdaftar, arahkan ke halaman registrasi
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => RegisterPage()),
       );
     }
   }
@@ -406,7 +392,7 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => CardExample()),
+        MaterialPageRoute(builder: (context) => const CardExample()),
       );
     } on Exception catch (_) {
       showDialog(

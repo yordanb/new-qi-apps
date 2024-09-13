@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:new_qi_apps/auth/auth_service.dart';
 import '../auth/db_service.dart';
 import '../pages_detail/page_detil_ss.dart'; // Import halaman detail
 import '../config/config.dart'; // Import file config.dart
@@ -152,10 +153,10 @@ class _PageSSState extends State<PageSS> {
                             ),
                           ),
                         ),
-                        title: Text(
-                            '${snapshot.data![index]['no']}. ${snapshot.data![index]['mp_nama']}'),
+                        title: Text('${snapshot.data![index]['nama']}'),
                         subtitle: Text(
-                            '(${snapshot.data![index]['mp_nrp']})\n ${snapshot.data![index]['posisi']}'),
+                          '(${snapshot.data![index]['nrp']})\n $crew',
+                        ),
                       );
                     },
                   );
@@ -181,26 +182,24 @@ class _PageSSState extends State<PageSS> {
     }
   }
 
+  String crew = "";
   Future<List<dynamic>> _fecthDataUsers() async {
     _fecthDataUsersWA();
     // Ambil token yang disimpan
-    String? token = DBService.get("token");
-    print(token);
-    if (token == null) {
-      // Jika token tidak ditemukan, mungkin perlu login ulang atau token kadaluarsa
-      throw Exception('Token is not available');
-    }
+
     String apiUrl = _buildApiUrl();
     var result = await http.get(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
       },
     );
 
     if (result.statusCode == 200) {
-      return json.decode(result.body)['response'];
+      var obj = json.decode(result.body);
+      crew = obj["crew"];
+      return obj['response'];
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
@@ -240,11 +239,18 @@ class _PageSSState extends State<PageSS> {
 
   Future<String> _fecthDataUsersWA() async {
     String apiUrl = _buildApiUrl();
-    var result = await http.get(Uri.parse(apiUrl));
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
 
     if (result.statusCode == 200) {
-      dataCopiedToWA = json.decode(result.body)['response2'];
-      return json.decode(result.body)['response2'];
+      Map<String, dynamic> obj = json.decode(result.body);
+      dataCopiedToWA = obj['response2'] ?? "";
+      return dataCopiedToWA;
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
@@ -253,7 +259,13 @@ class _PageSSState extends State<PageSS> {
 
   Future<String> _fetchLastUpdateData() async {
     String apiUrl = _buildApiUrl();
-    var result = await http.get(Uri.parse(apiUrl));
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
 
     if (result.statusCode == 200) {
       return json.decode(result.body)['update'];

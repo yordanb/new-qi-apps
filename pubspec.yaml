@@ -40,6 +40,8 @@ dependencies:
   shared_preferences: ^2.3.2
   android_id: ^0.4.0
   flutter_animate: ^4.5.0
+  syncfusion_flutter_charts: ^26.2.14
+  syncfusion_flutter_gauges: ^26.2.14
 
 dev_dependencies:
   flutter_test:
