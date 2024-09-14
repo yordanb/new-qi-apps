@@ -197,12 +197,7 @@ class _CardExampleState extends State<CardExample> {
                     scrollDirection: Axis.horizontal,
                     physics: const ScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
-                      List<Color> colors = [
-                        Colors.red,
-                        Colors.green,
-                        Colors.blue
-                      ];
-                      Color color = colors[index];
+                      // Mengambil nilai `kpi` dan `response` dari data
                       String kpiTitle =
                           chartDataList[index]["kpi"]; // Mengambil nilai `kpi`
                       List<Map<String, dynamic>> chartData =
@@ -228,10 +223,25 @@ class _CardExampleState extends State<CardExample> {
                             series: <CartesianSeries>[
                               BarSeries<Map<String, dynamic>, String>(
                                 dataSource: chartData,
-                                color: color,
                                 xValueMapper: (Map data, _) => data["label"],
                                 yValueMapper: (Map data, _) =>
                                     double.parse(data["value"]),
+                                pointColorMapper: (Map data, _) {
+                                  // Memastikan nilai `value` dalam bentuk double
+                                  double value = double.parse(data["value"]);
+
+                                  // Mengatur warna berdasarkan kondisi nilai `value`
+                                  if (value < 25) {
+                                    return Colors
+                                        .red; // Merah untuk nilai < 25%
+                                  } else if (value >= 25 && value < 100) {
+                                    return Colors
+                                        .yellow; // Kuning untuk nilai antara 25% dan 100%
+                                  } else {
+                                    return Colors
+                                        .green; // Hijau untuk nilai >= 100%
+                                  }
+                                },
                                 dataLabelSettings:
                                     const DataLabelSettings(isVisible: true),
                               )
@@ -287,10 +297,10 @@ class _CardExampleState extends State<CardExample> {
   String crew = "";
   Future<List<Map<String, dynamic>>> _fecthDataUsersChartBar() async {
     // URL untuk dua endpoint yang berbeda (ss-all-plt2 dan jarvis-all-plt2)
-    String apiUrl1 = "http://209.182.237.240:5005/api/ss-all-plt2";
-    String apiUrl2 = "http://209.182.237.240:5005/api/jarvis-all-plt2";
+    String apiUrl1 = "http://$apiIP:$apiPort/api/ss-all-plt2";
+    String apiUrl2 = "http://$apiIP:$apiPort/api/jarvis-all-plt2";
     String apiUrl3 =
-        "http://209.182.237.240:5005/api/ipeak-all-plt2"; // Uncomment jika ingin menambah
+        "http://$apiIP:$apiPort/api/ipeak-all-plt2"; // Uncomment jika ingin menambah
 
     // Membuat dua request API sekaligus dengan Future.wait
     var responses = await Future.wait([
