@@ -580,30 +580,33 @@ class _CardExampleState extends State<CardExample> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<dynamic>>(
+            child: FutureBuilder<List<Map<String, dynamic>>>(
               future: _fecthDataUsersChartBar(),
               builder: (BuildContext context,
-                  AsyncSnapshot<List<dynamic>> snapshot) {
+                  AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return const Center(child: Text('Data tidak ditemukan'));
                 } else if (snapshot.hasData) {
-                  List<Map<String, dynamic>> chartData =
-                      snapshot.data!.map((item) {
-                    return {
-                      "label": item['label'],
-                      "value": double.parse(item['value']),
-                    };
-                  }).toList();
+                  // Data untuk masing-masing chart bar
+                  List<Map<String, dynamic>> chartDataList = snapshot.data!;
 
                   return ListView.builder(
-                    itemCount: 3,
+                    itemCount: chartDataList.length,
                     scrollDirection: Axis.horizontal,
                     physics: const ScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
-                      List colors = [Colors.red, Colors.green, Colors.blue];
+                      List<Color> colors = [
+                        Colors.red,
+                        Colors.green,
+                        Colors.blue
+                      ];
                       Color color = colors[index];
+                      String kpiTitle =
+                          chartDataList[index]["kpi"]; // Mengambil nilai `kpi`
+                      List<Map<String, dynamic>> chartData =
+                          chartDataList[index]["response"];
 
                       return Card(
                         child: Container(
@@ -612,7 +615,9 @@ class _CardExampleState extends State<CardExample> {
                           padding: const EdgeInsets.all(0.0),
                           child: SfCartesianChart(
                             isTransposed: true,
-                            title: const ChartTitle(text: 'Sales by year'),
+                            title: ChartTitle(
+                                text:
+                                    kpiTitle), // Menggunakan nilai `kpi` sebagai judul
                             primaryXAxis: const CategoryAxis(
                               labelIntersectAction:
                                   AxisLabelIntersectAction.rotate45,
@@ -625,7 +630,8 @@ class _CardExampleState extends State<CardExample> {
                                 dataSource: chartData,
                                 color: color,
                                 xValueMapper: (Map data, _) => data["label"],
-                                yValueMapper: (Map data, _) => data["value"],
+                                yValueMapper: (Map data, _) =>
+                                    double.parse(data["value"]),
                                 dataLabelSettings:
                                     const DataLabelSettings(isVisible: true),
                               )
@@ -679,24 +685,63 @@ class _CardExampleState extends State<CardExample> {
   }
 
   String crew = "";
+  Future<List<Map<String, dynamic>>> _fecthDataUsersChartBar() async {
+    // URL untuk dua endpoint yang berbeda (ss-all-plt2 dan jarvis-all-plt2)
+    String apiUrl1 = "http://209.182.237.240:5005/api/ss-all-plt2";
+    String apiUrl2 = "http://209.182.237.240:5005/api/jarvis-all-plt2";
+    // String apiUrl3 = "http://209.182.237.240:5005/api/eiictm-all-plt2"; // Uncomment jika ingin menambah
 
-  Future<List<dynamic>> _fecthDataUsersChartBar() async {
-    String apiUrl = "http://$apiIP:$apiPort/api/ss-all-plt2";
-    var result = await http.get(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
-      },
-    );
+    // Membuat dua request API sekaligus dengan Future.wait
+    var responses = await Future.wait([
+      http.get(
+        Uri.parse(apiUrl1),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $userToken',
+        },
+      ),
+      http.get(
+        Uri.parse(apiUrl2),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $userToken',
+        },
+      ),
+      // Tambahkan kembali jika menggunakan API ketiga
+      // http.get(
+      //   Uri.parse(apiUrl3),
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': 'Bearer $userToken',
+      //   },
+      // ),
+    ]);
 
-    if (result.statusCode == 200) {
-      var obj = json.decode(result.body);
-      crew = obj["crew"];
-      //print(obj['response']);
-      return obj['response'];
+    // Cek status code dari masing-masing response
+    if (responses[0].statusCode == 200 && responses[1].statusCode == 200) {
+      // Decode response body menjadi objek JSON
+      var data1 = json.decode(responses[0].body);
+      var data2 = json.decode(responses[1].body);
+      // var data3 = json.decode(responses[2].body); // Uncomment jika ingin menambah
+
+      // Return list yang berisi `kpi` dan `response` untuk masing-masing API
+      return [
+        {
+          "kpi": data1['kpi'],
+          "response": List<Map<String, dynamic>>.from(data1['response'])
+        },
+        {
+          "kpi": data2['kpi'],
+          "response": List<Map<String, dynamic>>.from(data2['response'])
+        },
+        // Tambahkan kembali jika menggunakan API ketiga
+        // {
+        //   "kpi": data3['kpi'],
+        //   "response": List<Map<String, dynamic>>.from(data3['response'])
+        // }
+      ];
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load data from one or more endpoints');
     }
   }
 
