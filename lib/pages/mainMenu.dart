@@ -264,10 +264,10 @@ class _CardExampleState extends State<CardExample> {
             padding: const EdgeInsets.all(10),
             children: [
               _buildCard(context, 'SS', const PageSS()),
-              _buildCard(context, 'SAP', const PageMenuSAP()),
-              _buildCard(context, 'Ipeak', const PageIpeak()),
               _buildCard(context, 'Jarvis', const PageJarvis()),
+              _buildCard(context, 'Ipeak', const PageIpeak()),
               _buildCard(context, 'SS AB', const PageSSAB()),
+              _buildCard(context, 'SAP', const PageMenuSAP()),
               _buildCard(context, 'My Acvh', const PageSSAB()),
             ],
           ),
