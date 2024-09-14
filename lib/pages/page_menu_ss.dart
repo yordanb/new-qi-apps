@@ -173,7 +173,7 @@ class _PageSSState extends State<PageSS> {
   String _buildApiUrl() {
     switch (_selectedMenu3) {
       case 'plt2':
-        return "http://$apiIP:$apiPort/api/ss-staff-rank";
+        return "http://$apiIP:$apiPort/api/ss-staff-plt2";
       case 'zero':
         return "http://$apiIP:$apiPort/api/ss-mech-zero";
       case '<5':
