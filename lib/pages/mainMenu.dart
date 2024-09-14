@@ -30,7 +30,7 @@ class _CardExampleState extends State<CardExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QI Apps'),
+        title: const Text('QI Dasbboard Apps'),
         actions: [
           IconButton(
             icon: Icon(_isDarkMode ? Icons.dark_mode : Icons.light_mode),
@@ -62,20 +62,20 @@ class _CardExampleState extends State<CardExample> {
               child: Builder(builder: (context) {
                 List<Map> values = [
                   {
-                    "label": "Mobile",
-                    "value": 300,
+                    "label": "SS Acvh",
+                    "value": 30,
                   },
                   {
-                    "label": "LCE",
-                    "value": 600,
+                    "label": "Jarvis Acvh",
+                    "value": 60,
                   },
                   {
-                    "label": "MTE",
-                    "value": 900,
+                    "label": "Ipeak Acvh",
+                    "value": 90,
                   },
                   {
-                    "label": "PSC",
-                    "value": 442,
+                    "label": "EIICTM",
+                    "value": 44,
                   },
                 ];
 
@@ -124,20 +124,20 @@ class _CardExampleState extends State<CardExample> {
                                 axes: <RadialAxis>[
                                   RadialAxis(
                                     minimum: 0,
-                                    maximum: 1000,
+                                    maximum: 150,
                                     showLabels: false,
                                     ranges: <GaugeRange>[
                                       GaugeRange(
                                           startValue: 0,
-                                          endValue: 300,
+                                          endValue: 25,
                                           color: colors[0]),
                                       GaugeRange(
-                                          startValue: 300,
-                                          endValue: 700,
+                                          startValue: 25,
+                                          endValue: 100,
                                           color: colors[1]),
                                       GaugeRange(
-                                          startValue: 700,
-                                          endValue: 1000,
+                                          startValue: 100,
+                                          endValue: 150,
                                           color: colors[2]),
                                     ],
                                     pointers: <GaugePointer>[
@@ -154,7 +154,7 @@ class _CardExampleState extends State<CardExample> {
                                   bottom: 10.0,
                                 ),
                                 child: Text(
-                                  "$value",
+                                  "$value %",
                                   style: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.width *
@@ -237,7 +237,7 @@ class _CardExampleState extends State<CardExample> {
                               // opposedPosition: true,
                             ),
                             primaryYAxis: const NumericAxis(
-                              title: AxisTitle(text: 'Year'),
+                              title: AxisTitle(text: 'Acvh (%)'),
                             ),
                             // legend: const Legend(
                             //   isVisible: true,
