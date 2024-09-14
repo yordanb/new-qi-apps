@@ -658,7 +658,7 @@ class _CardExampleState extends State<CardExample> {
               _buildCard(context, 'Ipeak', const PageIpeak()),
               _buildCard(context, 'Jarvis', const PageJarvis()),
               _buildCard(context, 'SS AB', const PageSSAB()),
-              _buildCard(context, 'KPI QI', const PageSSAB()),
+              _buildCard(context, 'My Acvh', const PageSSAB()),
             ],
           ),
         ],
@@ -689,7 +689,8 @@ class _CardExampleState extends State<CardExample> {
     // URL untuk dua endpoint yang berbeda (ss-all-plt2 dan jarvis-all-plt2)
     String apiUrl1 = "http://209.182.237.240:5005/api/ss-all-plt2";
     String apiUrl2 = "http://209.182.237.240:5005/api/jarvis-all-plt2";
-    // String apiUrl3 = "http://209.182.237.240:5005/api/eiictm-all-plt2"; // Uncomment jika ingin menambah
+    String apiUrl3 =
+        "http://209.182.237.240:5005/api/ipeak-all-plt2"; // Uncomment jika ingin menambah
 
     // Membuat dua request API sekaligus dengan Future.wait
     var responses = await Future.wait([
@@ -708,21 +709,24 @@ class _CardExampleState extends State<CardExample> {
         },
       ),
       // Tambahkan kembali jika menggunakan API ketiga
-      // http.get(
-      //   Uri.parse(apiUrl3),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': 'Bearer $userToken',
-      //   },
-      // ),
+      http.get(
+        Uri.parse(apiUrl3),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $userToken',
+        },
+      ),
     ]);
 
     // Cek status code dari masing-masing response
-    if (responses[0].statusCode == 200 && responses[1].statusCode == 200) {
+    if (responses[0].statusCode == 200 &&
+        responses[1].statusCode == 200 &&
+        responses[2].statusCode == 200) {
       // Decode response body menjadi objek JSON
       var data1 = json.decode(responses[0].body);
       var data2 = json.decode(responses[1].body);
-      // var data3 = json.decode(responses[2].body); // Uncomment jika ingin menambah
+      var data3 =
+          json.decode(responses[2].body); // Uncomment jika ingin menambah
 
       // Return list yang berisi `kpi` dan `response` untuk masing-masing API
       return [
@@ -735,10 +739,10 @@ class _CardExampleState extends State<CardExample> {
           "response": List<Map<String, dynamic>>.from(data2['response'])
         },
         // Tambahkan kembali jika menggunakan API ketiga
-        // {
-        //   "kpi": data3['kpi'],
-        //   "response": List<Map<String, dynamic>>.from(data3['response'])
-        // }
+        {
+          "kpi": data3['kpi'],
+          "response": List<Map<String, dynamic>>.from(data3['response'])
+        }
       ];
     } else {
       throw Exception('Failed to load data from one or more endpoints');
