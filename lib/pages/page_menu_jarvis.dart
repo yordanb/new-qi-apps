@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../pages_detail/page_detil_jarvis.dart'; // Import halaman detail
 import '../config/config.dart'; // Import file config.dart
+import 'package:new_qi_apps/auth/auth_service.dart';
 
 class PageJarvis extends StatefulWidget {
   const PageJarvis({super.key});
@@ -138,11 +139,11 @@ class _PageJarvisState extends State<PageJarvis> {
                           },
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundColor: _getAvatarColor(
-                                snapshot.data![index]['JmlDoc']),
+                            backgroundColor:
+                                _getAvatarColor(snapshot.data![index]['doc']),
                             foregroundColor: Colors.black,
                             child: Text(
-                              snapshot.data![index]['JmlDoc'].toString(),
+                              snapshot.data![index]['doc'].toString(),
                               style: const TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.w400,
@@ -151,9 +152,9 @@ class _PageJarvisState extends State<PageJarvis> {
                           ),
                         ),
                         title: Text(
-                            '${snapshot.data![index]['no']}. ${snapshot.data![index]['mp_nama']}'),
-                        subtitle: Text(
-                            '(${snapshot.data![index]['mp_nrp']})\n ${snapshot.data![index]['posisi']}'),
+                            '${snapshot.data![index]['no']}. ${snapshot.data![index]['nama']}'),
+                        subtitle:
+                            Text('(${snapshot.data![index]['nrp']})\n $crew'),
                       );
                     },
                   );
@@ -169,21 +170,32 @@ class _PageJarvisState extends State<PageJarvis> {
   String _buildApiUrl() {
     switch (_selectedMenu3) {
       case 'plt2':
-        return "http://$apiIP:$apiPort/api/staff-jarvis-rank";
+        return "http://$apiIP:$apiPort/api/jarvis-staff-rank";
       case 'zero':
-        return "http://$apiIP:$apiPort/api/mech-zero";
+        return "http://$apiIP:$apiPort/api/jarvis-mech-zero";
       default:
         return "http://$apiIP:$apiPort/api/jarvis-$_selectedMenu2/$_selectedMenu3";
     }
   }
 
+  String crew = "";
   Future<List<dynamic>> _fecthDataUsers() async {
     _fecthDataUsersWA();
+    // Ambil token yang disimpan
+
     String apiUrl = _buildApiUrl();
-    var result = await http.get(Uri.parse(apiUrl));
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
 
     if (result.statusCode == 200) {
-      return json.decode(result.body)['response'];
+      var obj = json.decode(result.body);
+      crew = obj["crew"];
+      return obj['response'];
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
@@ -192,11 +204,18 @@ class _PageJarvisState extends State<PageJarvis> {
 
   Future<String> _fecthDataUsersWA() async {
     String apiUrl = _buildApiUrl();
-    var result = await http.get(Uri.parse(apiUrl));
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
 
     if (result.statusCode == 200) {
-      dataCopiedToWA = json.decode(result.body)['response2'];
-      return json.decode(result.body)['response2'];
+      Map<String, dynamic> obj = json.decode(result.body);
+      dataCopiedToWA = obj['response2'] ?? "";
+      return dataCopiedToWA;
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
@@ -205,7 +224,13 @@ class _PageJarvisState extends State<PageJarvis> {
 
   Future<String> _fetchLastUpdateData() async {
     String apiUrl = _buildApiUrl();
-    var result = await http.get(Uri.parse(apiUrl));
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
 
     if (result.statusCode == 200) {
       return json.decode(result.body)['update'];
@@ -215,8 +240,8 @@ class _PageJarvisState extends State<PageJarvis> {
     }
   }
 
-  Color _getAvatarColor(int jmlSS) {
-    if (jmlSS < 1) {
+  Color _getAvatarColor(int jmlDoc) {
+    if (jmlDoc < 1) {
       return Colors.redAccent;
     } else {
       return Colors.lightGreen;

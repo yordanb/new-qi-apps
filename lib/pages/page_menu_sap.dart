@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../pages_detail/page_detil_sap.dart'; // Import halaman detail
 import '../config/config.dart'; // Import file config.dart
+import 'package:new_qi_apps/auth/auth_service.dart';
 
 class PageMenuSAP extends StatefulWidget {
   const PageMenuSAP({super.key});
@@ -152,12 +153,11 @@ class _PageSAPState extends State<PageMenuSAP> {
                           ),
                         ),
                         title: Text(
-                          '${snapshot.data![index]['no']}.  '
-                          '${snapshot.data![index]['mp_nama']}',
+                          '${snapshot.data![index]['no']}. '
+                          '${snapshot.data![index]['nama']}',
                         ),
                         subtitle: Text(
-                          '(${snapshot.data![index]['mp_nrp']})\n'
-                          '${snapshot.data![index]['posisi']}',
+                          '(${snapshot.data![index]['nrp']})\n $crew',
                         ),
                       );
                     },
@@ -171,41 +171,81 @@ class _PageSAPState extends State<PageMenuSAP> {
     );
   }
 
+  String _buildApiUrl() {
+    switch (_selectedMenu3) {
+      case 'plt2':
+        return "http://$apiIP:$apiPort/api/staff-rank";
+      case 'zero':
+        return "http://$apiIP:$apiPort/api/mech-zero";
+      case '<5':
+        return "http://$apiIP:$apiPort/api/mech-5";
+      default:
+        return "http://$apiIP:$apiPort/api/sap-$_selectedMenu2/$_selectedMenu3";
+    }
+  }
+
+  String crew = "";
   Future<List<dynamic>> _fecthDataUsers() async {
     _fecthDataUsersWA();
-    String apiUrl =
-        "http://$apiIP:$apiPort/api/sap-$_selectedMenu2/$_selectedMenu3";
-    var result = await http.get(Uri.parse(apiUrl));
-    return json.decode(result.body)['response'];
+    // Ambil token yang disimpan
+
+    String apiUrl = _buildApiUrl();
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
+
+    if (result.statusCode == 200) {
+      var obj = json.decode(result.body);
+      crew = obj["crew"];
+      return obj['response'];
+    } else {
+      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
+      throw Exception('Failed to load data');
+    }
   }
 
   Future<String> _fecthDataUsersWA() async {
-    String apiUrl =
-        "http://$apiIP:$apiPort/api/sap-$_selectedMenu2/$_selectedMenu3";
-    var result = await http.get(Uri.parse(apiUrl));
-    dataCopiedToWA = json.decode(result.body)['response2'];
-    return json.decode(result.body)['response2'];
+    String apiUrl = _buildApiUrl();
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
+
+    if (result.statusCode == 200) {
+      Map<String, dynamic> obj = json.decode(result.body);
+      dataCopiedToWA = obj['response2'] ?? "";
+      return dataCopiedToWA;
+    } else {
+      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
+      throw Exception('Failed to load data');
+    }
   }
 
   Future<String> _fetchLastUpdateData() async {
-    String apiUrl =
-        "http://$apiIP:$apiPort/api/sap-$_selectedMenu2/$_selectedMenu3";
-    var result = await http.get(Uri.parse(apiUrl));
-    return json.decode(result.body)['update'];
+    String apiUrl = _buildApiUrl();
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
+
+    if (result.statusCode == 200) {
+      return json.decode(result.body)['update'];
+    } else {
+      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
+      throw Exception('Failed to load data');
+    }
   }
 
-/*
-  Color _getAvatarColor(double? sap) {
-    if (sap == null) {
-      return Colors.red;
-    } else if (sap < 70) {
-      return Colors.redAccent;
-    } else if (sap < 150) {
-      return Colors.lightGreen;
-    }
-    return Colors.red;
-  }
-  */
   Color _getAvatarColor(dynamic sap) {
     if (sap == null) {
       return Colors.red;

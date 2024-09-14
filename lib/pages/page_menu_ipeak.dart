@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 //import '../pages_detail/page_detil_ipeak.dart'; // Import halaman detail
 import '../config/config.dart';
+import 'package:new_qi_apps/auth/auth_service.dart';
 
 class PageIpeak extends StatefulWidget {
   const PageIpeak({super.key});
@@ -139,11 +140,11 @@ class _PageIpeakState extends State<PageIpeak> {
                           },*/
                           child: CircleAvatar(
                             radius: 30,
-                            backgroundColor: _getAvatarColor(
-                                snapshot.data![index]['frekAkses']),
+                            backgroundColor:
+                                _getAvatarColor(snapshot.data![index]['akses']),
                             foregroundColor: Colors.black,
                             child: Text(
-                              snapshot.data![index]['frekAkses'].toString(),
+                              snapshot.data![index]['akses'].toString(),
                               style: const TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.w400,
@@ -152,9 +153,10 @@ class _PageIpeakState extends State<PageIpeak> {
                           ),
                         ),
                         title: Text(
-                            '${snapshot.data![index]['no']}. ${snapshot.data![index]['mp_nama']}'),
+                            '${snapshot.data![index]['no']}. ${snapshot.data![index]['nama']}'),
                         subtitle: Text(
-                            '(${snapshot.data![index]['mp_nrp']})\n ${snapshot.data![index]['posisi']}'),
+                          '(${snapshot.data![index]['nrp']})\n $crew',
+                        ),
                       );
                     },
                   );
@@ -172,19 +174,30 @@ class _PageIpeakState extends State<PageIpeak> {
       case 'plt2':
         return "http://$apiIP:$apiPort/api/ipeak-staff-rank";
       case 'zero':
-        return "http://$apiIP:$apiPort/api/mech-zero";
+        return "http://$apiIP:$apiPort/api/ipeak-mech-zero";
       default:
         return "http://$apiIP:$apiPort/api/ipeak-$_selectedMenu2/$_selectedMenu3";
     }
   }
 
+  String crew = "";
   Future<List<dynamic>> _fecthDataUsers() async {
     _fecthDataUsersWA();
+    // Ambil token yang disimpan
+
     String apiUrl = _buildApiUrl();
-    var result = await http.get(Uri.parse(apiUrl));
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
 
     if (result.statusCode == 200) {
-      return json.decode(result.body)['response'];
+      var obj = json.decode(result.body);
+      crew = obj["crew"];
+      return obj['response'];
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
@@ -193,11 +206,18 @@ class _PageIpeakState extends State<PageIpeak> {
 
   Future<String> _fecthDataUsersWA() async {
     String apiUrl = _buildApiUrl();
-    var result = await http.get(Uri.parse(apiUrl));
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
 
     if (result.statusCode == 200) {
-      dataCopiedToWA = json.decode(result.body)['response2'];
-      return json.decode(result.body)['response2'];
+      Map<String, dynamic> obj = json.decode(result.body);
+      dataCopiedToWA = obj['response2'] ?? "";
+      return dataCopiedToWA;
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
@@ -206,7 +226,13 @@ class _PageIpeakState extends State<PageIpeak> {
 
   Future<String> _fetchLastUpdateData() async {
     String apiUrl = _buildApiUrl();
-    var result = await http.get(Uri.parse(apiUrl));
+    var result = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+      },
+    );
 
     if (result.statusCode == 200) {
       return json.decode(result.body)['update'];
@@ -216,8 +242,8 @@ class _PageIpeakState extends State<PageIpeak> {
     }
   }
 
-  Color _getAvatarColor(int jmlSS) {
-    if (jmlSS < 1) {
+  Color _getAvatarColor(int frekAkses) {
+    if (frekAkses < 1) {
       return Colors.redAccent;
     } else {
       return Colors.lightGreen;

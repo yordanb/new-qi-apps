@@ -153,7 +153,8 @@ class _PageSSState extends State<PageSS> {
                             ),
                           ),
                         ),
-                        title: Text('${snapshot.data![index]['nama']}'),
+                        title: Text('${snapshot.data![index]['no']}. '
+                            '${snapshot.data![index]['nama']}'),
                         subtitle: Text(
                           '(${snapshot.data![index]['nrp']})\n $crew',
                         ),
@@ -172,11 +173,11 @@ class _PageSSState extends State<PageSS> {
   String _buildApiUrl() {
     switch (_selectedMenu3) {
       case 'plt2':
-        return "http://$apiIP:$apiPort/api/staff-rank";
+        return "http://$apiIP:$apiPort/api/ss-staff-rank";
       case 'zero':
-        return "http://$apiIP:$apiPort/api/mech-zero";
+        return "http://$apiIP:$apiPort/api/ss-mech-zero";
       case '<5':
-        return "http://$apiIP:$apiPort/api/mech-5";
+        return "http://$apiIP:$apiPort/api/ss-mech-5";
       default:
         return "http://$apiIP:$apiPort/api/ss-$_selectedMenu2/$_selectedMenu3";
     }
@@ -205,37 +206,6 @@ class _PageSSState extends State<PageSS> {
       throw Exception('Failed to load data');
     }
   }
-
-  /*
-  Future<List<dynamic>> _fecthDataUsers() async {
-    // Retrieve the token from shared preferences
-    String? token = DBService.get('token');
-
-    // Check if token exists
-    if (token == null) {
-      throw Exception('Token not found');
-    }
-
-    String apiUrl =
-        'http://209.182.237.240:5005/api/ss-staff/lce'; // Replace with your actual API URL
-
-    // Send the GET request with the token in the headers
-    var result = await http.get(
-      Uri.parse(apiUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-    print(result);
-
-    if (result.statusCode == 200) {
-      return json.decode(result.body)['response'];
-    } else {
-      // If there's an error, throw an exception
-      throw Exception('Failed to load data');
-    }
-  }
-  */
 
   Future<String> _fecthDataUsersWA() async {
     String apiUrl = _buildApiUrl();
