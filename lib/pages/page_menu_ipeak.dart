@@ -16,14 +16,14 @@ class PageIpeak extends StatefulWidget {
 class _PageIpeakState extends State<PageIpeak> {
   //final String _selectedMenu1 = "ss";
   String _selectedMenu2 = "staff";
-  String _selectedMenu3 = "plt2";
+  String _selectedMenu3 = "pch";
   String dataCopiedToWA = "";
   List<dynamic> responseData = [];
   String formattedString = "";
 
   //List<String> menu1Items = ["ss"];
   Map<String, List<String>> menu2Items = {
-    "staff": ["plt2", "pch", "sse", "big wheel", "tere", "lce", "psc"],
+    "staff": ["pch", "sse", "big wheel", "tere", "lce", "psc", "plt2"],
     "mech": ["pch", "mobile", "big wheel", "lighting", "pumping"]
   };
 
@@ -155,7 +155,7 @@ class _PageIpeakState extends State<PageIpeak> {
                         title: Text(
                             '${snapshot.data![index]['no']}. ${snapshot.data![index]['nama']}'),
                         subtitle: Text(
-                          '(${snapshot.data![index]['nrp']})\n $crew',
+                          '(${snapshot.data![index]['nrp']})\n ${snapshot.data![index]['crew']}',
                         ),
                       );
                     },
@@ -196,7 +196,7 @@ class _PageIpeakState extends State<PageIpeak> {
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
-      crew = obj["crew"];
+      //crew = obj["crew"];
       return obj['response'];
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception

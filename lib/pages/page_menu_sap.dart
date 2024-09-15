@@ -157,7 +157,7 @@ class _PageSAPState extends State<PageMenuSAP> {
                           '${snapshot.data![index]['nama']}',
                         ),
                         subtitle: Text(
-                          '(${snapshot.data![index]['nrp']})\n $crew',
+                          '(${snapshot.data![index]['nrp']})\n ${snapshot.data![index]['crew']}',
                         ),
                       );
                     },
@@ -200,7 +200,7 @@ class _PageSAPState extends State<PageMenuSAP> {
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
-      crew = obj["crew"];
+      //crew = obj["crew"];
       return obj['response'];
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception

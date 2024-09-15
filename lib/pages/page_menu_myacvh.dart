@@ -17,15 +17,15 @@ import '../auth/login_page.dart';
 
 // Ambil token yang disimpan
 
-class CardExample extends StatefulWidget {
-  const CardExample({super.key});
+class PageMyAcvh extends StatefulWidget {
+  const PageMyAcvh({super.key});
 
   @override
-  _CardExampleState createState() => _CardExampleState();
+  _PageMyAcvhState createState() => _PageMyAcvhState();
 }
 
-class _CardExampleState extends State<CardExample> {
-  bool _isDarkMode = false; // Variabel untuk dark mode
+class _PageMyAcvhState extends State<PageMyAcvh> {
+  final bool _isDarkMode = false; // Variabel untuk dark mode
   List<Map<String, dynamic>> values = [];
 
   @override
@@ -39,7 +39,8 @@ class _CardExampleState extends State<CardExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QI Dasbboard Apps'),
+        title: const Text('My Dasbboard Acvh'),
+        /*
         actions: [
           IconButton(
             icon: Icon(_isDarkMode ? Icons.dark_mode : Icons.light_mode),
@@ -59,7 +60,7 @@ class _CardExampleState extends State<CardExample> {
               );
             },
           ),
-        ],
+        ],*/
       ),
       body: Column(
         children: [
@@ -116,12 +117,12 @@ class _CardExampleState extends State<CardExample> {
                                     child: Text(
                                       label,
                                       style: const TextStyle(
-                                        fontSize: 14.0,
+                                        fontSize: 20.0,
                                       ),
                                     ),
                                   ),
                                   Container(
-                                    margin: const EdgeInsets.only(top: 20.0),
+                                    margin: const EdgeInsets.only(top: 40.0),
                                     child: SfRadialGauge(
                                       axes: <RadialAxis>[
                                         RadialAxis(
@@ -153,14 +154,14 @@ class _CardExampleState extends State<CardExample> {
                                     alignment: Alignment.bottomCenter,
                                     child: Container(
                                       margin:
-                                          const EdgeInsets.only(bottom: 10.0),
+                                          const EdgeInsets.only(bottom: 90.0),
                                       child: Text(
                                         "$value %",
                                         style: TextStyle(
                                           fontSize: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.034,
+                                              0.044,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -180,6 +181,7 @@ class _CardExampleState extends State<CardExample> {
               ),
             ),
           ),
+          /*
           Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: _fecthDataUsersChartBar(),
@@ -271,26 +273,8 @@ class _CardExampleState extends State<CardExample> {
               _buildCard(context, 'SAP', const PageMenuSAP()),
               _buildCard(context, 'My Acvh', const PageMyAcvh()),
             ],
-          ),
+          ),*/
         ],
-      ),
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String title, Widget page) {
-    return Card(
-      clipBehavior: Clip.hardEdge,
-      child: InkWell(
-        splashColor: Colors.blue.withAlpha(30),
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => page));
-        },
-        child: SizedBox(
-          width: 100,
-          height: 100,
-          child: Center(child: Text(title)),
-        ),
       ),
     );
   }
@@ -402,7 +386,7 @@ class _MyAppState extends State<MyApp> {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
       ),
-      home: const CardExample(),
+      home: const PageMyAcvh(),
     );
   }
 

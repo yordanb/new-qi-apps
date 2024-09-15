@@ -156,7 +156,7 @@ class _PageSSState extends State<PageSS> {
                         title: Text('${snapshot.data![index]['no']}. '
                             '${snapshot.data![index]['nama']}'),
                         subtitle: Text(
-                          '(${snapshot.data![index]['nrp']})\n $crew',
+                          '(${snapshot.data![index]['nrp']})\n ${snapshot.data![index]['crew']}',
                         ),
                       );
                     },
@@ -185,10 +185,11 @@ class _PageSSState extends State<PageSS> {
 
   String crew = "";
   Future<List<dynamic>> _fecthDataUsers() async {
-    _fecthDataUsersWA();
+    //_fecthDataUsersWA();
     // Ambil token yang disimpan
 
     String apiUrl = _buildApiUrl();
+    print(apiUrl);
     var result = await http.get(
       Uri.parse(apiUrl),
       headers: {
@@ -196,17 +197,20 @@ class _PageSSState extends State<PageSS> {
         'Authorization': 'Bearer $userToken', // Menyertakan token ke header
       },
     );
+    print("ok request Get kembali");
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
-      crew = obj["crew"];
+      //crew = obj["crew"];
+      print(obj['response']);
+
       return obj['response'];
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
     }
   }
-
+/*
   Future<String> _fecthDataUsersWA() async {
     String apiUrl = _buildApiUrl();
     var result = await http.get(
@@ -226,6 +230,7 @@ class _PageSSState extends State<PageSS> {
       throw Exception('Failed to load data');
     }
   }
+  */
 
   Future<String> _fetchLastUpdateData() async {
     String apiUrl = _buildApiUrl();
