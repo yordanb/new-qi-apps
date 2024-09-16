@@ -218,8 +218,19 @@ class _CardExampleState extends State<CardExample> {
                               labelIntersectAction:
                                   AxisLabelIntersectAction.rotate45,
                             ),
+                            /*
                             primaryYAxis: const NumericAxis(
                               title: AxisTitle(text: 'Acvh (%)'),
+                            ),
+                            */
+                            primaryYAxis: NumericAxis(
+                              // Kondisi untuk mengubah title berdasarkan nilai KPI
+                              title: AxisTitle(
+                                text: (kpiTitle == "SS Zero Mech" ||
+                                        kpiTitle == "SS Zero Staff")
+                                    ? 'Jumlah MP'
+                                    : 'Acvh (%)',
+                              ),
                             ),
                             series: <CartesianSeries>[
                               BarSeries<Map<String, dynamic>, String>(
@@ -302,6 +313,8 @@ class _CardExampleState extends State<CardExample> {
     String apiUrl2 = "http://$apiIP:$apiPort/api/jarvis-all-plt2";
     String apiUrl3 =
         "http://$apiIP:$apiPort/api/ipeak-all-plt2"; // Uncomment jika ingin menambah
+    String apiUrl4 = "http://$apiIP:$apiPort/api/ss-zero-mech-plt2";
+    String apiUrl5 = "http://$apiIP:$apiPort/api/ss-zero-staff-plt2";
 
     // Membuat dua request API sekaligus dengan Future.wait
     var responses = await Future.wait([
@@ -327,17 +340,34 @@ class _CardExampleState extends State<CardExample> {
           'Authorization': 'Bearer $userToken',
         },
       ),
+      http.get(
+        Uri.parse(apiUrl4),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $userToken',
+        },
+      ),
+      http.get(
+        Uri.parse(apiUrl5),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $userToken',
+        },
+      ),
     ]);
 
     // Cek status code dari masing-masing response
     if (responses[0].statusCode == 200 &&
         responses[1].statusCode == 200 &&
-        responses[2].statusCode == 200) {
+        responses[2].statusCode == 200 &&
+        responses[3].statusCode == 200 &&
+        responses[4].statusCode == 200) {
       // Decode response body menjadi objek JSON
       var data1 = json.decode(responses[0].body);
       var data2 = json.decode(responses[1].body);
-      var data3 =
-          json.decode(responses[2].body); // Uncomment jika ingin menambah
+      var data3 = json.decode(responses[2].body);
+      var data4 = json.decode(responses[3].body);
+      var data5 = json.decode(responses[4].body);
 
       // Return list yang berisi `kpi` dan `response` untuk masing-masing API
       return [
@@ -353,6 +383,16 @@ class _CardExampleState extends State<CardExample> {
         {
           "kpi": data3['kpi'],
           "response": List<Map<String, dynamic>>.from(data3['response'])
+        },
+        // Tambahkan kembali jika menggunakan API ketiga
+        {
+          "kpi": data4['kpi'],
+          "response": List<Map<String, dynamic>>.from(data4['response'])
+        },
+        // Tambahkan kembali jika menggunakan API ketiga
+        {
+          "kpi": data5['kpi'],
+          "response": List<Map<String, dynamic>>.from(data5['response'])
         }
       ];
     } else {

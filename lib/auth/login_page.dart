@@ -21,10 +21,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final nrpController = TextEditingController(
-    text: kDebugMode ? "123456" : "",
+    text: kDebugMode ? "5005" : "",
   );
   final passwordController = TextEditingController(
-    text: kDebugMode ? "123456" : "",
+    text: kDebugMode ? "5005" : "",
   );
 
   String androidID = ""; // Variabel untuk menyimpan AndroidID
