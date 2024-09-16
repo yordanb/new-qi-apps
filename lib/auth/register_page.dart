@@ -29,7 +29,7 @@ class RegisterPage extends StatelessWidget {
     const androidIdPlugin = AndroidId();
     String? androidID = await androidIdPlugin.getId();
 
-    print(androidID);
+    //print(androidID);
 
     // Prepare data to be sent in JSON format
     final Map<String, dynamic> data = {

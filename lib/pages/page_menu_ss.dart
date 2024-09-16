@@ -189,7 +189,7 @@ class _PageSSState extends State<PageSS> {
     // Ambil token yang disimpan
 
     String apiUrl = _buildApiUrl();
-    print(apiUrl);
+    //print(apiUrl);
     var result = await http.get(
       Uri.parse(apiUrl),
       headers: {
@@ -197,12 +197,12 @@ class _PageSSState extends State<PageSS> {
         'Authorization': 'Bearer $userToken', // Menyertakan token ke header
       },
     );
-    print("ok request Get kembali");
+    //print("ok request Get kembali");
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
       //crew = obj["crew"];
-      print(obj['response']);
+      //print(obj['response']);
 
       return obj['response'];
     } else {

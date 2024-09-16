@@ -31,7 +31,7 @@ class AuthService {
       );
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        print(responseData);
+        //print(responseData);
         if (responseData['status'] == "already_registered") {
           return true;
         }
@@ -77,12 +77,12 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        print(json.decode(response.body));
+        //print(json.decode(response.body));
         final Map<String, dynamic> responseData = json.decode(response.body);
 
         final String token = responseData['token'];
-        print("ini token juga : ");
-        print(token);
+        //print("ini token juga : ");
+        //print(token);
 
         // Simpan token ke dalam penyimpanan lokal
         DBService.set("token", token);

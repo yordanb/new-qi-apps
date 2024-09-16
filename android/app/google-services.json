@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "327373595480",
+    "project_id": "new-qi-apps-push-notif-5e963",
+    "storage_bucket": "new-qi-apps-push-notif-5e963.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327373595480:android:6f41bb57110dfb8df6fb2d",
+        "android_client_info": {
+          "package_name": "com.example.new_qi_apps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-KEYJWbcRr-csvmTOy9Rkk4oBg6bJQLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

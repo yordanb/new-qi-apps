@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
       this.androidID = androidID!; // Simpan AndroidID
     });
 
-    print(androidID);
+    //print(androidID);
 
     // Cek apakah AndroidID sudah terdaftar
     bool isRegistered = await AuthService().checkAndroidID(androidID!);
