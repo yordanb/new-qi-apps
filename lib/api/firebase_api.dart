@@ -1,5 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:new_qi_apps/main.dart';
+import '../auth/db_service.dart';
 
 class FirebaseApi {
   final _firebaseMessaging = FirebaseMessaging.instance;
@@ -9,7 +11,17 @@ class FirebaseApi {
 
     final fCMToken = await _firebaseMessaging.getToken();
 
-    print('FCM Token : $fCMToken');
+    try {
+      // Save the token to the DBService
+      await DBService.set("fCMToken", fCMToken!);
+      if (kDebugMode) {
+        print("Token saved successfully");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Failed to save token: $e");
+      }
+    }
 
     initPushNotifications();
   }

@@ -134,7 +134,7 @@ class _PageSSState extends State<PageSS> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => PageDetilSS(
-                                  nrp: snapshot.data![index]['mp_nrp'],
+                                  nrp: snapshot.data![index]['nrp'],
                                 ),
                               ),
                             );

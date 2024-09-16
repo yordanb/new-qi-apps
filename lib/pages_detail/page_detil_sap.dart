@@ -45,10 +45,10 @@ class PageDetilSAP extends StatelessWidget {
                   leading: CircleAvatar(
                     radius: 45,
                     backgroundColor: _getAvatarColor(
-                        formatSAP(snapshot.data![index]['AcvhSAP'])),
+                        formatSAP(snapshot.data![index]['acvh_sap'])),
                     foregroundColor: Colors.black,
                     child: Text(
-                      formatSAP(snapshot.data![index]['AcvhSAP'].toString()),
+                      formatSAP(snapshot.data![index]['acvh_sap'].toString()),
                       //snapshot.data![index]['AcvhSAP'].toString(),
                       style: const TextStyle(
                         fontSize: 20,
@@ -57,14 +57,14 @@ class PageDetilSAP extends StatelessWidget {
                     ),
                   ),
                   title: Text(
-                    snapshot.data![index]['mp_nama'],
+                    snapshot.data![index]['nama'],
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
-                  ),
+                  ), //\n${snapshot.data![index]['mp_crew']}
                   subtitle: Text(
-                    '(${snapshot.data![index]['mp_nrp']})\n${snapshot.data![index]['mp_crew']}\nHari Hadir : ${snapshot.data![index]['sap_hadir']} hari\nKTA Completed : ${snapshot.data![index]['KTACompleted']}\nAcvh KTA : ${snapshot.data![index]['KTAAcvh']}\nTTA Completed : ${snapshot.data![index]['TTACompleted']}\nAcvh TTA : ${snapshot.data![index]['TTAAcvh']}\nTA : ${snapshot.data![index]['TA']}\nKA : ${snapshot.data![index]['KA']}\nAcvh SAP : ${snapshot.data![index]['AcvhSAP']} %\n',
+                    '(${snapshot.data![index]['nrp']})\nHari Hadir : ${snapshot.data![index]['hari_hadir']} hari\nKTA Completed : ${snapshot.data![index]['kta_omp']}\nAcvh KTA : ${snapshot.data![index]['kta_acvh']}\nTTA Completed : ${snapshot.data![index]['tta_comp']}\nAcvh TTA : ${snapshot.data![index]['TTAAcvh']}\nTA : ${snapshot.data![index]['ta']}\nKA : ${snapshot.data![index]['ka']}\nAcvh SAP : ${snapshot.data![index]['acvh_sap']} %\n',
                   ),
                 );
               },

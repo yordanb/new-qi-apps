@@ -8,6 +8,8 @@ import 'db_service.dart';
 import 'register_page.dart'; // Import halaman registrasi
 import 'package:android_id/android_id.dart';
 
+String? get fcmToken => DBService.get("fCMToken");
+
 class LoginPage extends StatefulWidget {
   final bool isAlreadyRegistered;
   const LoginPage({
@@ -33,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     if (widget.isAlreadyRegistered == false) _getAndroidID();
+    DBService.init();
   }
 
 // Mendapatkan AndroidID perangkat menggunakan android_id plugin
@@ -61,7 +64,6 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> signUserIn(BuildContext context) async {
     final nrp = nrpController.text;
     final password = passwordController.text;
-    DBService.set("nrp", nrp);
 
     try {
       await AuthService().loginWithNRP(
@@ -99,6 +101,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    //String? fCMToken = DBService.get("fCMToken");
+    //print(fCMToken);
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: SafeArea(
@@ -190,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                       return Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Text(
-                          'Device ID: ${snapshot.data ?? "Tidak tersedia"}',
+                          'Device ID: ${snapshot.data ?? "Tidak tersedia"}\nFCM : $fcmToken',
                           style: const TextStyle(fontSize: 16),
                         ),
                       );
