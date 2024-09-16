@@ -21,7 +21,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final nrpController = TextEditingController(
-    text: kDebugMode ? "12345678" : "",
+    text: kDebugMode ? "123456" : "",
   );
   final passwordController = TextEditingController(
     text: kDebugMode ? "123456" : "",
@@ -44,6 +44,8 @@ class _LoginPageState extends State<LoginPage> {
       this.androidID = androidID!; // Simpan AndroidID
     });
 
+    print(androidID);
+
     // Cek apakah AndroidID sudah terdaftar
     bool isRegistered = await AuthService().checkAndroidID(androidID!);
     if (!isRegistered) {
@@ -65,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       await AuthService().loginWithNRP(
         nrp: nrp,
         password: password,
+        androidId: androidID,
       );
 
       Navigator.pushReplacement(

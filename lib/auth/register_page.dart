@@ -27,14 +27,16 @@ class RegisterPage extends StatelessWidget {
 
     // Get Android ID
     const androidIdPlugin = AndroidId();
-    String? androidId = await androidIdPlugin.getId();
+    String? androidID = await androidIdPlugin.getId();
+
+    print(androidID);
 
     // Prepare data to be sent in JSON format
     final Map<String, dynamic> data = {
       'nrp': nrp,
       'name': name,
       'password': password,
-      'androidID': androidId,
+      'androidID': androidID,
     };
 
     const String apiUrl = "http://$apiIP:$apiPort/auth/reg";
