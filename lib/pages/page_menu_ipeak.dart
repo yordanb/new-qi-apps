@@ -197,6 +197,7 @@ class _PageIpeakState extends State<PageIpeak> {
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
       //crew = obj["crew"];
+      dataCopiedToWA = obj['wa'];
       return obj['response'];
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception

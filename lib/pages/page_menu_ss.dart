@@ -203,6 +203,8 @@ class _PageSSState extends State<PageSS> {
       var obj = json.decode(result.body);
       //crew = obj["crew"];
       //print(obj['response']);
+      dataCopiedToWA = obj['wa'];
+      //print(dataCopiedToWA);
 
       return obj['response'];
     } else {
