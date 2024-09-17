@@ -4,26 +4,51 @@ import 'package:new_qi_apps/main.dart';
 import '../auth/db_service.dart';
 
 class FirebaseApi {
-  final _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initNotifications() async {
-    await _firebaseMessaging.requestPermission();
-
-    final fCMToken = await _firebaseMessaging.getToken();
-
     try {
-      // Save the token to the DBService
-      await DBService.set("fCMToken", fCMToken!);
-      if (kDebugMode) {
-        print("Token saved successfully");
+      // Inisialisasi DBService untuk SharedPreferences
+      await DBService.init();
+
+      // Meminta izin untuk notifikasi
+      NotificationSettings settings =
+          await _firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        if (kDebugMode) {
+          //print("User denied notification permission");
+        }
+        return;
       }
+
+      // Mendapatkan token FCM
+      final fCMToken = await _firebaseMessaging.getToken();
+
+      if (fCMToken == null) {
+        if (kDebugMode) {
+          //print("Failed to obtain FCM Token: Token is null");
+        }
+        return;
+      }
+
+      // Menyimpan token ke DBService
+      await DBService.set("fCMToken", fCMToken);
+      if (kDebugMode) {
+        //print("Token saved successfully: $fCMToken");
+      }
+
+      // Inisialisasi push notifications
+      initPushNotifications();
     } catch (e) {
       if (kDebugMode) {
-        print("Failed to save token: $e");
+        //print("Failed to initialize notifications: $e");
       }
     }
-
-    initPushNotifications();
   }
 
   void handleMessage(RemoteMessage? message) {
@@ -33,8 +58,18 @@ class FirebaseApi {
         ?.pushNamed('/notification_screen', arguments: message);
   }
 
-  Future initPushNotifications() async {
-    FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
-    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
+  Future<void> initPushNotifications() async {
+    try {
+      FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
+      FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
+
+      if (kDebugMode) {
+        //print("Push notifications initialized successfully");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        //print("Failed to initialize push notifications: $e");
+      }
+    }
   }
 }

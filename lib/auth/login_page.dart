@@ -8,8 +8,6 @@ import 'db_service.dart';
 import 'register_page.dart'; // Import halaman registrasi
 import 'package:android_id/android_id.dart';
 
-String? get fcmToken => DBService.get("fCMToken");
-
 class LoginPage extends StatefulWidget {
   final bool isAlreadyRegistered;
   const LoginPage({
@@ -30,12 +28,15 @@ class _LoginPageState extends State<LoginPage> {
   );
 
   String androidID = ""; // Variabel untuk menyimpan AndroidID
+  String? fcmToken = "";
+  //String? get fcmToken => DBService.get("fCMToken");
 
   @override
   void initState() {
     super.initState();
     if (widget.isAlreadyRegistered == false) _getAndroidID();
     DBService.init();
+    _loadFCMToken(); // Load FCM Token ketika halaman login diinisialisasi
   }
 
 // Mendapatkan AndroidID perangkat menggunakan android_id plugin
@@ -55,9 +56,17 @@ class _LoginPageState extends State<LoginPage> {
       // Jika AndroidID belum terdaftar, arahkan ke halaman registrasi
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => RegisterPage()),
+        MaterialPageRoute(builder: (context) => const RegisterPage()),
       );
     }
+  }
+
+  // Fungsi untuk load FCM Token dari DBService
+  Future<void> _loadFCMToken() async {
+    setState(() {
+      fcmToken = DBService.get("fCMToken");
+      print('fcm login :  $fcmToken');
+    });
   }
 
   // Fungsi untuk melakukan login dengan NRP, password, dan AndroidID
@@ -105,6 +114,7 @@ class _LoginPageState extends State<LoginPage> {
     //print(fCMToken);
     return Scaffold(
       backgroundColor: Colors.grey[300],
+      //backgroundColor: const Color.fromARGB(255, 0, 247, 255),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -168,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => RegisterPage(),
+                            builder: (context) => const RegisterPage(),
                           ),
                         );
                       },
@@ -194,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                       return Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Text(
-                          'Device ID: ${snapshot.data ?? "Tidak tersedia"}\nFCM : $fcmToken',
+                          'Device ID: ${snapshot.data ?? "Tidak tersedia"}', //\nFCM : $fcmToken',
                           style: const TextStyle(fontSize: 16),
                         ),
                       );
