@@ -31,7 +31,7 @@ class _PageJarvisState extends State<PageJarvis> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cek Data JARVIS'),
+        title: const Text('Data JARVIS'),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -128,6 +128,7 @@ class _PageJarvisState extends State<PageJarvis> {
                         leading: InkWell(
                           onTap: () {
                             // Navigasi ke halaman detail dan kirim data NRP
+                            /*
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -136,6 +137,7 @@ class _PageJarvisState extends State<PageJarvis> {
                                 ),
                               ),
                             );
+                            */
                           },
                           child: CircleAvatar(
                             radius: 30,

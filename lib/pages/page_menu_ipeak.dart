@@ -31,7 +31,7 @@ class _PageIpeakState extends State<PageIpeak> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cek Data IPEAK'),
+        title: const Text('Data IPEAK'),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.zero,

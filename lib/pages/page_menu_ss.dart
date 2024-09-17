@@ -33,7 +33,7 @@ class _PageSSState extends State<PageSS> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cek Data SS'),
+        title: const Text('Data Sugestion System'),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -130,6 +130,8 @@ class _PageSSState extends State<PageSS> {
                         leading: InkWell(
                           onTap: () {
                             // Navigasi ke halaman detail dan kirim data NRP
+                            DBService.set(
+                                "nama", snapshot.data![index]['nama']);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

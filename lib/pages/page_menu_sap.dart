@@ -31,7 +31,7 @@ class _PageSAPState extends State<PageMenuSAP> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cek Data SAP'),
+        title: const Text('Data SAP'),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -128,6 +128,7 @@ class _PageSAPState extends State<PageMenuSAP> {
                         leading: InkWell(
                           onTap: () {
                             // Navigasi ke halaman detail dan kirim data NRP
+                            /*
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -136,6 +137,7 @@ class _PageSAPState extends State<PageMenuSAP> {
                                 ),
                               ),
                             );
+                            */
                           },
                           child: CircleAvatar(
                             radius: 45,
