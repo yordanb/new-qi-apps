@@ -39,7 +39,7 @@ class _CardExampleState extends State<CardExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QI Dasbboard Apps'),
+        title: const Text('Plant 2 QI Board'),
         actions: [
           IconButton(
             icon: Icon(_isDarkMode ? Icons.dark_mode : Icons.light_mode),
@@ -269,6 +269,10 @@ class _CardExampleState extends State<CardExample> {
               },
             ),
           ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text('Update : $update'),
           GridView.count(
             shrinkWrap: true,
             crossAxisCount: 3,
@@ -307,6 +311,7 @@ class _CardExampleState extends State<CardExample> {
   }
 
   String crew = "";
+  String update = "";
   Future<List<Map<String, dynamic>>> _fecthDataUsersChartBar() async {
     // URL untuk dua endpoint yang berbeda (ss-all-plt2 dan jarvis-all-plt2)
     String apiUrl1 = "http://$apiIP:$apiPort/api/ss-all-plt2";
@@ -413,6 +418,8 @@ class _CardExampleState extends State<CardExample> {
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
       crew = obj["crew"];
+      update = obj["update"];
+      //print(update);
       //print(obj['response']);
       return obj['response'];
     } else {
