@@ -1,10 +1,10 @@
+//kode ke-3
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:new_qi_apps/auth/auth_service.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import '../auth/auth_service.dart';
 import '../auth/db_service.dart';
 import '../config/config.dart';
 import 'page_menu_myacvh.dart';
@@ -15,8 +15,6 @@ import 'page_menu_jarvis.dart';
 import 'page_menu_ssab.dart';
 import '../auth/login_page.dart';
 
-// Ambil token yang disimpan
-
 class CardExample extends StatefulWidget {
   const CardExample({super.key});
 
@@ -25,14 +23,15 @@ class CardExample extends StatefulWidget {
 }
 
 class _CardExampleState extends State<CardExample> {
-  bool _isDarkMode = false; // Variabel untuk dark mode
-  List<Map<String, dynamic>> values = [];
+  bool _isDarkMode = false;
+  late Future<Map<String, dynamic>> futureKPIData;
+  late Future<List<Map<String, dynamic>>> futureBarData;
 
   @override
   void initState() {
     super.initState();
-    _fecthDataUsersChartBar();
-    _fecthDataUsersChartKPI(); // Fetch data saat state diinisialisasi
+    futureKPIData = _fetchDataUsersChartKPI();
+    futureBarData = _fetchDataUsersChartBar();
   }
 
   @override
@@ -45,8 +44,7 @@ class _CardExampleState extends State<CardExample> {
             icon: Icon(_isDarkMode ? Icons.dark_mode : Icons.light_mode),
             onPressed: () {
               setState(() {
-                _isDarkMode =
-                    !_isDarkMode; // Toggle antara dark mode dan light mode
+                _isDarkMode = !_isDarkMode;
               });
             },
           ),
@@ -66,17 +64,18 @@ class _CardExampleState extends State<CardExample> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: FutureBuilder<List<dynamic>>(
-                future: _fecthDataUsersChartKPI(),
+              child: FutureBuilder<Map<String, dynamic>>(
+                future: futureKPIData,
                 builder: (BuildContext context,
-                    AsyncSnapshot<List<dynamic>> snapshot) {
+                    AsyncSnapshot<Map<String, dynamic>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return const Center(child: Text('Data tidak ditemukan'));
                   } else if (snapshot.hasData) {
+                    var data = snapshot.data;
                     List<Map<String, dynamic>> chartData =
-                        snapshot.data!.map((item) {
+                        (data?['data'] as List<dynamic>).map((item) {
                       return {
                         "label": item['label'],
                         "value": double.parse(item['value']),
@@ -182,7 +181,7 @@ class _CardExampleState extends State<CardExample> {
           ),
           Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: _fecthDataUsersChartBar(),
+              future: futureBarData,
               builder: (BuildContext context,
                   AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -190,17 +189,13 @@ class _CardExampleState extends State<CardExample> {
                 } else if (snapshot.hasError) {
                   return const Center(child: Text('Data tidak ditemukan'));
                 } else if (snapshot.hasData) {
-                  // Data untuk masing-masing chart bar
                   List<Map<String, dynamic>> chartDataList = snapshot.data!;
 
                   return ListView.builder(
                     itemCount: chartDataList.length,
                     scrollDirection: Axis.horizontal,
-                    physics: const ScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
-                      // Mengambil nilai `kpi` dan `response` dari data
-                      String kpiTitle =
-                          chartDataList[index]["kpi"]; // Mengambil nilai `kpi`
+                      String kpiTitle = chartDataList[index]["kpi"];
                       List<Map<String, dynamic>> chartData =
                           chartDataList[index]["response"];
 
@@ -211,20 +206,12 @@ class _CardExampleState extends State<CardExample> {
                           padding: const EdgeInsets.all(0.0),
                           child: SfCartesianChart(
                             isTransposed: true,
-                            title: ChartTitle(
-                                text:
-                                    kpiTitle), // Menggunakan nilai `kpi` sebagai judul
+                            title: ChartTitle(text: kpiTitle),
                             primaryXAxis: const CategoryAxis(
                               labelIntersectAction:
                                   AxisLabelIntersectAction.rotate45,
                             ),
-                            /*
-                            primaryYAxis: const NumericAxis(
-                              title: AxisTitle(text: 'Acvh (%)'),
-                            ),
-                            */
                             primaryYAxis: NumericAxis(
-                              // Kondisi untuk mengubah title berdasarkan nilai KPI
                               title: AxisTitle(
                                 text: (kpiTitle == "SS Zero Mech" ||
                                         kpiTitle == "SS Zero Staff")
@@ -239,19 +226,13 @@ class _CardExampleState extends State<CardExample> {
                                 yValueMapper: (Map data, _) =>
                                     double.parse(data["value"]),
                                 pointColorMapper: (Map data, _) {
-                                  // Memastikan nilai `value` dalam bentuk double
                                   double value = double.parse(data["value"]);
-
-                                  // Mengatur warna berdasarkan kondisi nilai `value`
                                   if (value < 25) {
-                                    return Colors
-                                        .red; // Merah untuk nilai < 25%
+                                    return Colors.red;
                                   } else if (value >= 25 && value < 100) {
-                                    return Colors
-                                        .yellow; // Kuning untuk nilai antara 25% dan 100%
+                                    return Colors.yellow;
                                   } else {
-                                    return Colors
-                                        .green; // Hijau untuk nilai >= 100%
+                                    return Colors.green;
                                   }
                                 },
                                 dataLabelSettings:
@@ -310,156 +291,101 @@ class _CardExampleState extends State<CardExample> {
     );
   }
 
-  String crew = "";
   String update = "";
-  Future<List<Map<String, dynamic>>> _fecthDataUsersChartBar() async {
-    // URL untuk dua endpoint yang berbeda (ss-all-plt2 dan jarvis-all-plt2)
+
+  Future<List<Map<String, dynamic>>> _fetchDataUsersChartBar() async {
     String apiUrl1 = "http://$apiIP:$apiPort/api/ss-all-plt2";
     String apiUrl2 = "http://$apiIP:$apiPort/api/jarvis-all-plt2";
-    String apiUrl3 =
-        "http://$apiIP:$apiPort/api/ipeak-all-plt2"; // Uncomment jika ingin menambah
+    String apiUrl3 = "http://$apiIP:$apiPort/api/ipeak-all-plt2";
     String apiUrl4 = "http://$apiIP:$apiPort/api/ss-zero-mech-plt2";
     String apiUrl5 = "http://$apiIP:$apiPort/api/ss-zero-staff-plt2";
 
-    // Membuat dua request API sekaligus dengan Future.wait
     var responses = await Future.wait([
-      http.get(
-        Uri.parse(apiUrl1),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $userToken',
-        },
-      ),
-      http.get(
-        Uri.parse(apiUrl2),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $userToken',
-        },
-      ),
-      // Tambahkan kembali jika menggunakan API ketiga
-      http.get(
-        Uri.parse(apiUrl3),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $userToken',
-        },
-      ),
-      http.get(
-        Uri.parse(apiUrl4),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $userToken',
-        },
-      ),
-      http.get(
-        Uri.parse(apiUrl5),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $userToken',
-        },
-      ),
+      http.get(Uri.parse(apiUrl1),
+          headers: {'Authorization': 'Bearer $userToken'}),
+      http.get(Uri.parse(apiUrl2),
+          headers: {'Authorization': 'Bearer $userToken'}),
+      http.get(Uri.parse(apiUrl3),
+          headers: {'Authorization': 'Bearer $userToken'}),
+      http.get(Uri.parse(apiUrl4),
+          headers: {'Authorization': 'Bearer $userToken'}),
+      http.get(Uri.parse(apiUrl5),
+          headers: {'Authorization': 'Bearer $userToken'}),
     ]);
 
-    // Cek status code dari masing-masing response
-    if (responses[0].statusCode == 200 &&
-        responses[1].statusCode == 200 &&
-        responses[2].statusCode == 200 &&
-        responses[3].statusCode == 200 &&
-        responses[4].statusCode == 200) {
-      // Decode response body menjadi objek JSON
-      var data1 = json.decode(responses[0].body);
-      var data2 = json.decode(responses[1].body);
-      var data3 = json.decode(responses[2].body);
-      var data4 = json.decode(responses[3].body);
-      var data5 = json.decode(responses[4].body);
-
-      // Return list yang berisi `kpi` dan `response` untuk masing-masing API
+    if (responses.every((response) => response.statusCode == 200)) {
       return [
         {
-          "kpi": data1['kpi'],
-          "response": List<Map<String, dynamic>>.from(data1['response'])
+          "kpi": json.decode(responses[0].body)['kpi'],
+          "response": List<Map<String, dynamic>>.from(
+              json.decode(responses[0].body)['response']),
         },
         {
-          "kpi": data2['kpi'],
-          "response": List<Map<String, dynamic>>.from(data2['response'])
+          "kpi": json.decode(responses[1].body)['kpi'],
+          "response": List<Map<String, dynamic>>.from(
+              json.decode(responses[1].body)['response']),
         },
-        // Tambahkan kembali jika menggunakan API ketiga
         {
-          "kpi": data3['kpi'],
-          "response": List<Map<String, dynamic>>.from(data3['response'])
+          "kpi": json.decode(responses[2].body)['kpi'],
+          "response": List<Map<String, dynamic>>.from(
+              json.decode(responses[2].body)['response']),
         },
-        // Tambahkan kembali jika menggunakan API ketiga
         {
-          "kpi": data4['kpi'],
-          "response": List<Map<String, dynamic>>.from(data4['response'])
+          "kpi": json.decode(responses[3].body)['kpi'],
+          "response": List<Map<String, dynamic>>.from(
+              json.decode(responses[3].body)['response']),
         },
-        // Tambahkan kembali jika menggunakan API ketiga
         {
-          "kpi": data5['kpi'],
-          "response": List<Map<String, dynamic>>.from(data5['response'])
-        }
+          "kpi": json.decode(responses[4].body)['kpi'],
+          "response": List<Map<String, dynamic>>.from(
+              json.decode(responses[4].body)['response']),
+        },
       ];
     } else {
       throw Exception('Failed to load data from one or more endpoints');
     }
   }
 
-  Future<List<dynamic>> _fecthDataUsersChartKPI() async {
+  Future<Map<String, dynamic>> _fetchDataUsersChartKPI() async {
     String apiUrl = "http://$apiIP:$apiPort/api/all-kpi";
-    var result = await http.get(
+    var response = await http.get(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken',
       },
     );
 
-    if (result.statusCode == 200) {
-      var obj = json.decode(result.body);
-      crew = obj["crew"];
-      update = obj["update"];
-      //print(update);
-      //print(obj['response']);
-      return obj['response'];
+    if (response.statusCode == 200) {
+      var decodedData = jsonDecode(response.body);
+
+      // Extract update value
+      if (decodedData.containsKey('update') &&
+          decodedData['update'] is String) {
+        update = decodedData['update'];
+        print(update);
+        setState(() {}); // Memicu pembaruan UI
+      }
+
+      // Check if 'response' key exists and holds a list
+      if (decodedData.containsKey('response') &&
+          decodedData['response'] is List) {
+        List<Map<String, dynamic>> chartData =
+            (decodedData['response'] as List).map((item) {
+          return {
+            "label": item['label'] ?? '', // Provide default values if needed
+            "value": item['value'] ?? '',
+          };
+        }).toList();
+        //print(chartData);
+        return {'data': chartData};
+      } else {
+        // Handle the case where 'data' is missing or not a list
+        //print("API response doesn't have a 'data' list or 'data' is null");
+        return {'data': []}; // Return an empty list to avoid errors
+      }
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load KPI data');
     }
   }
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  bool _isDarkMode = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
-      home: const CardExample(),
-    );
-  }
-
-  void toggleDarkMode() {
-    setState(() {
-      _isDarkMode = !_isDarkMode;
-    });
-  }
-}
-
-void main() {
-  runApp(const MyApp());
 }
