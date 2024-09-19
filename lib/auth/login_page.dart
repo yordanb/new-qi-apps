@@ -80,6 +80,8 @@ class _LoginPageState extends State<LoginPage> {
         password: password,
         androidId: androidID,
       );
+      //simpan nrp
+      DBService.set("nrp", nrp);
 
       Navigator.pushReplacement(
         context,

@@ -1,10 +1,10 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:new_qi_apps/auth/auth_service.dart';
-import '../auth/db_service.dart';
-import '../pages_detail/page_detil_ss.dart'; // Import halaman detail
 import '../config/config.dart'; // Import file config.dart
 //import '../auth/db_service.dart'; // Import DBService to access shared preferences
 
@@ -16,18 +16,9 @@ class PageSSAB extends StatefulWidget {
 }
 
 class _PageSSABState extends State<PageSSAB> {
-  //final String _selectedMenu1 = "ss";
-  final String _selectedMenu2 = "staff";
-  final String _selectedMenu3 = "plt2";
   String dataCopiedToWA = "";
   List<dynamic> responseData = [];
   String formattedString = "";
-
-  //List<String> menu1Items = ["ss"];
-  Map<String, List<String>> menu2Items = {
-    "staff": ["plt2", "pch", "sse", "big wheel", "tere", "lce", "psc"],
-    "mech": ["pch", "mobile", "big wheel", "lighting", "pumping", "zero", "<5"]
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -50,17 +41,6 @@ class _PageSSABState extends State<PageSSAB> {
             },
           ),
         ),
-        /*
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: dataCopiedToWA));
-              _showSnackBar(context, 'Data telah disalin');
-            },
-            icon: const Icon(Icons.content_copy),
-          ),
-        ],
-        */
       ),
       body: Column(
         children: [
@@ -159,27 +139,6 @@ class _PageSSABState extends State<PageSSAB> {
       throw Exception('Failed to load data');
     }
   }
-/*
-  Future<String> _fecthDataUsersWA() async {
-    String apiUrl = _buildApiUrl();
-    var result = await http.get(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
-      },
-    );
-
-    if (result.statusCode == 200) {
-      Map<String, dynamic> obj = json.decode(result.body);
-      dataCopiedToWA = obj['response2'] ?? "";
-      return dataCopiedToWA;
-    } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
-      throw Exception('Failed to load data');
-    }
-  }
-  */
 
   Future<String> _fetchLastUpdateData() async {
     String apiUrl = _buildApiUrl();

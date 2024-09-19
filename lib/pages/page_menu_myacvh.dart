@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../auth/auth_service.dart';
+import '../auth/db_service.dart';
 import '../config/config.dart';
-import '../auth/login_page.dart';
 
 class PageMenuMyacvh extends StatefulWidget {
   const PageMenuMyacvh({super.key});
@@ -15,44 +15,44 @@ class PageMenuMyacvh extends StatefulWidget {
 }
 
 class _PageMenuMyacvh extends State<PageMenuMyacvh> {
-  bool _isDarkMode = false;
   late Future<Map<String, dynamic>> futureKPIData;
   late Future<List<Map<String, dynamic>>> futureBarData;
+  String? nrp = "";
 
   @override
   void initState() {
     super.initState();
+    DBService.init();
+    _loadNRP();
     futureKPIData = _fetchDataUsersChartKPI();
     futureBarData = _fetchDataUsersChartBar();
+  }
+
+  Future<void> _loadNRP() async {
+    setState(() {
+      nrp = DBService.get("nrp");
+      //print('fcm login :  $fcmToken');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Yordan Baniara Acvh'),
-        actions: [
-          IconButton(
-            icon: Icon(_isDarkMode ? Icons.dark_mode : Icons.light_mode),
-            onPressed: () {
-              setState(() {
-                _isDarkMode = !_isDarkMode;
-              });
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-            },
-          ),
-        ],
+        centerTitle: true,
+        title: const Text(
+          "My KPI Board Acvh",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
+          Text(
+            nama,
+            style: const TextStyle(
+                fontSize: 25, color: Colors.blue, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -131,7 +131,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
                                     child: Text(
                                       label,
                                       style: const TextStyle(
-                                        fontSize: 14.0,
+                                        fontSize: 16.0,
                                       ),
                                     ),
                                   ),
@@ -201,9 +201,9 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
                     itemCount: chartDataList.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
-                      String kpiTitle = chartDataList[index]["kpi"];
+                      String kpiTitle = "SS Yearly 2024";
                       List<Map<String, dynamic>> chartData =
-                          chartDataList[index]["response"];
+                          chartDataList[index]["barChart"];
 
                       return Card(
                         child: Container(
@@ -219,9 +219,8 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
                             ),
                             primaryYAxis: NumericAxis(
                               title: AxisTitle(
-                                text: (kpiTitle == "SS Zero Mech" ||
-                                        kpiTitle == "SS Zero Staff")
-                                    ? 'Jumlah MP'
+                                text: (kpiTitle == "SS Yearly 2024")
+                                    ? 'Jumlah SS'
                                     : 'Acvh (%)',
                               ),
                             ),
@@ -233,10 +232,8 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
                                     double.parse(data["value"]),
                                 pointColorMapper: (Map data, _) {
                                   double value = double.parse(data["value"]);
-                                  if (value < 25) {
+                                  if (value < 5) {
                                     return Colors.red;
-                                  } else if (value >= 25 && value < 100) {
-                                    return Colors.yellow;
                                   } else {
                                     return Colors.green;
                                   }
@@ -260,21 +257,6 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
             height: 20,
           ),
           Text('Update : $update'),
-          /*
-          GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 3,
-            childAspectRatio: 1.0 / 0.4,
-            padding: const EdgeInsets.all(10),
-            children: [
-              _buildCard(context, 'SS', const PageSS()),
-              _buildCard(context, 'Jarvis', const PageJarvis()),
-              _buildCard(context, 'Ipeak', const PageIpeak()),
-              _buildCard(context, 'SS AB', const PageSSAB()),
-              _buildCard(context, 'SAP', const PageMenuSAP()),
-              //_buildCard(context, 'My Acvh', const PageMyAcvh()),
-            ],
-          ),*/
           const SizedBox(
             height: 20,
           ),
@@ -283,43 +265,14 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
     );
   }
 
-  Widget _buildCard(BuildContext context, String title, Widget page) {
-    return Card(
-      clipBehavior: Clip.hardEdge,
-      child: InkWell(
-        splashColor: Colors.blue.withAlpha(30),
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => page));
-        },
-        child: SizedBox(
-          width: 100,
-          height: 100,
-          child: Center(child: Text(title)),
-        ),
-      ),
-    );
-  }
-
   String update = "";
+  String nama = "";
 
   Future<List<Map<String, dynamic>>> _fetchDataUsersChartBar() async {
-    String apiUrl1 = "http://$apiIP:$apiPort/api/ss-all-plt2";
-    String apiUrl2 = "http://$apiIP:$apiPort/api/jarvis-all-plt2";
-    String apiUrl3 = "http://$apiIP:$apiPort/api/ipeak-all-plt2";
-    String apiUrl4 = "http://$apiIP:$apiPort/api/ss-zero-mech-plt2";
-    String apiUrl5 = "http://$apiIP:$apiPort/api/ss-zero-staff-plt2";
+    String apiUrl1 = "http://$apiIP:$apiPort/api/all-data/$nrp";
 
     var responses = await Future.wait([
       http.get(Uri.parse(apiUrl1),
-          headers: {'Authorization': 'Bearer $userToken'}),
-      http.get(Uri.parse(apiUrl2),
-          headers: {'Authorization': 'Bearer $userToken'}),
-      http.get(Uri.parse(apiUrl3),
-          headers: {'Authorization': 'Bearer $userToken'}),
-      http.get(Uri.parse(apiUrl4),
-          headers: {'Authorization': 'Bearer $userToken'}),
-      http.get(Uri.parse(apiUrl5),
           headers: {'Authorization': 'Bearer $userToken'}),
     ]);
 
@@ -327,28 +280,8 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
       return [
         {
           "kpi": json.decode(responses[0].body)['kpi'],
-          "response": List<Map<String, dynamic>>.from(
-              json.decode(responses[0].body)['response']),
-        },
-        {
-          "kpi": json.decode(responses[1].body)['kpi'],
-          "response": List<Map<String, dynamic>>.from(
-              json.decode(responses[1].body)['response']),
-        },
-        {
-          "kpi": json.decode(responses[2].body)['kpi'],
-          "response": List<Map<String, dynamic>>.from(
-              json.decode(responses[2].body)['response']),
-        },
-        {
-          "kpi": json.decode(responses[3].body)['kpi'],
-          "response": List<Map<String, dynamic>>.from(
-              json.decode(responses[3].body)['response']),
-        },
-        {
-          "kpi": json.decode(responses[4].body)['kpi'],
-          "response": List<Map<String, dynamic>>.from(
-              json.decode(responses[4].body)['response']),
+          "barChart": List<Map<String, dynamic>>.from(
+              json.decode(responses[0].body)['barChart']),
         },
       ];
     } else {
@@ -357,7 +290,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
   }
 
   Future<Map<String, dynamic>> _fetchDataUsersChartKPI() async {
-    String apiUrl = "http://$apiIP:$apiPort/api/all-data/61122292";
+    String apiUrl = "http://$apiIP:$apiPort/api/all-data/$nrp";
     var response = await http.get(
       Uri.parse(apiUrl),
       headers: {
@@ -368,11 +301,13 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
 
     if (response.statusCode == 200) {
       var decodedData = jsonDecode(response.body);
+      //print(decodedData);
 
       // Extract update value
       if (decodedData.containsKey('update') &&
           decodedData['update'] is String) {
         update = decodedData['update'];
+        nama = decodedData['name'];
         //print(update);
         setState(() {}); // Memicu pembaruan UI
       }

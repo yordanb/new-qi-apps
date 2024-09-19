@@ -22,7 +22,7 @@ class CardExample extends StatefulWidget {
 }
 
 class _CardExampleState extends State<CardExample> {
-  bool _isDarkMode = false;
+  final bool _isDarkMode = false;
   late Future<Map<String, dynamic>> futureKPIData;
   late Future<List<Map<String, dynamic>>> futureBarData;
 
@@ -37,8 +37,13 @@ class _CardExampleState extends State<CardExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Plant 2 QI Board'),
+        centerTitle: true,
+        title: const Text(
+          'Plant 2 QI Board Acvh',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
+          /*
           IconButton(
             icon: Icon(_isDarkMode ? Icons.dark_mode : Icons.light_mode),
             onPressed: () {
@@ -47,6 +52,7 @@ class _CardExampleState extends State<CardExample> {
               });
             },
           ),
+          */
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
@@ -294,6 +300,7 @@ class _CardExampleState extends State<CardExample> {
 
   Future<List<Map<String, dynamic>>> _fetchDataUsersChartBar() async {
     String apiUrl1 = "http://$apiIP:$apiPort/api/ss-all-plt2";
+
     String apiUrl2 = "http://$apiIP:$apiPort/api/jarvis-all-plt2";
     String apiUrl3 = "http://$apiIP:$apiPort/api/ipeak-all-plt2";
     String apiUrl4 = "http://$apiIP:$apiPort/api/ss-zero-mech-plt2";
