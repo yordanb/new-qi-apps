@@ -121,14 +121,14 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 150),
                 const Icon(
                   Icons.lock,
                   size: 90,
                 ),
                 const SizedBox(height: 30),
                 Text(
-                  'Welcome back you\'ve been missed!',
+                  'Welcome back Innovator, you\'ve been missed!',
                   style: TextStyle(
                     color: Colors.grey[700],
                     fontSize: 16,
@@ -164,7 +164,8 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () => signUserIn(context),
                   text: 'Login',
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 5),
+                /*
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -192,7 +193,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                */
+                //const SizedBox(height: 20),
                 FutureBuilder<String?>(
                   future: _getAndroidId(),
                   builder: (context, snapshot) {
@@ -211,6 +213,16 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   },
                 ),
+                const SizedBox(height: 130), // Space before the support text
+                const Text(
+                  'Supported by QI Agent Plant 2 KIDE',
+                  style: TextStyle(
+                    color: Colors.blue, // Set the text color to blue
+                    //fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                //const SizedBox(height: 20), // Optional bottom padding
               ],
             ),
           ),

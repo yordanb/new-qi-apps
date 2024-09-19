@@ -1,4 +1,3 @@
-//kode ke-3
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -6,12 +5,6 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../auth/auth_service.dart';
 import '../config/config.dart';
-import 'page_menu_myacvh.dart';
-import 'page_menu_sap.dart';
-import 'page_menu_ss.dart';
-import 'page_menu_ipeak.dart';
-import 'page_menu_jarvis.dart';
-import 'page_menu_ssab.dart';
 import '../auth/login_page.dart';
 
 class PageMenuMyacvh extends StatefulWidget {
@@ -96,14 +89,38 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
                               Colors.green,
                             ];
 
-                            if (label == "PSC") {
+                            List<GaugeRange> ranges = [
+                              GaugeRange(
+                                  startValue: 0,
+                                  endValue: 25,
+                                  color: colors[0]),
+                              GaugeRange(
+                                  startValue: 25,
+                                  endValue: 100,
+                                  color: colors[1]),
+                              GaugeRange(
+                                  startValue: 100,
+                                  endValue: 150,
+                                  color: colors[2]),
+                            ];
+
+                            // Jika label adalah "SAP Acvh", ubah warna dan range
+                            if (label == "SAP Acvh") {
                               colors = [
-                                Colors.green,
-                                Colors.orange,
                                 Colors.red,
+                                Colors.green,
+                              ];
+                              ranges = [
+                                GaugeRange(
+                                    startValue: 0,
+                                    endValue: 70,
+                                    color: colors[0]),
+                                GaugeRange(
+                                    startValue: 70,
+                                    endValue: 100,
+                                    color: colors[1]),
                               ];
                             }
-
                             return SizedBox(
                               height: h,
                               width: w,
@@ -124,22 +141,12 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
                                       axes: <RadialAxis>[
                                         RadialAxis(
                                           minimum: 0,
-                                          maximum: 150,
+                                          maximum: label == "SAP Acvh"
+                                              ? 100
+                                              : 150, // Atur maksimum sesuai label
                                           showLabels: false,
-                                          ranges: <GaugeRange>[
-                                            GaugeRange(
-                                                startValue: 0,
-                                                endValue: 25,
-                                                color: colors[0]),
-                                            GaugeRange(
-                                                startValue: 25,
-                                                endValue: 100,
-                                                color: colors[1]),
-                                            GaugeRange(
-                                                startValue: 100,
-                                                endValue: 150,
-                                                color: colors[2]),
-                                          ],
+                                          ranges:
+                                              ranges, // Gunakan range yang telah diubah
                                           pointers: <GaugePointer>[
                                             NeedlePointer(value: value),
                                           ],
@@ -366,7 +373,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
       if (decodedData.containsKey('update') &&
           decodedData['update'] is String) {
         update = decodedData['update'];
-        print(update);
+        //print(update);
         setState(() {}); // Memicu pembaruan UI
       }
 

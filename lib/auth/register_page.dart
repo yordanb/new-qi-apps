@@ -202,6 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final nrpController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
+  final defPasswordController = TextEditingController();
   bool _isPasswordVisible = false; // Untuk mengatur visibilitas password
 
   // Fungsi untuk mendapatkan Android ID
@@ -214,9 +215,13 @@ class _RegisterPageState extends State<RegisterPage> {
     final String nrp = nrpController.text;
     final String name = nameController.text;
     final String password = passwordController.text;
+    final String defPassword = defPasswordController.text;
 
     // Validasi input
-    if (nrp.isEmpty || name.isEmpty || password.isEmpty) {
+    if (nrp.isEmpty ||
+        name.isEmpty ||
+        password.isEmpty ||
+        defPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Semua kolom harus diisi!')),
       );
@@ -232,6 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
       'nrp': nrp,
       'name': name,
       'password': password,
+      'def_password': defPassword,
       'androidID': androidID,
     };
 
@@ -318,6 +324,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: false,
                 ),
                 const SizedBox(height: 10),
+                MyTextField(
+                  controller: defPasswordController,
+                  hintText: 'Default Password',
+                  obscureText: false,
+                ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 25.0), // Atur padding horizontal
@@ -325,7 +337,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: passwordController,
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
-                      hintText: 'Password',
+                      hintText: 'New Password',
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
