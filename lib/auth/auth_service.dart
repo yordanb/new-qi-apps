@@ -48,6 +48,7 @@ class AuthService {
     required String nrp,
     required String password,
     required String androidId,
+    required bool loginAs,
   }) async {
     try {
       String? androidID = await _getAndroidId(); // Dapatkan AndroidID
@@ -66,7 +67,9 @@ class AuthService {
         'nrp': nrp,
         'password': password,
         'androidId': androidID,
+        'loginAs': loginAs,
       };
+      print(data);
 
       final response = await http.post(
         Uri.parse('http://$apiIP:$apiPort/auth/login'),

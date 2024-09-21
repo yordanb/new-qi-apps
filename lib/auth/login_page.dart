@@ -1,3 +1,4 @@
+//kode ke-2
 import 'package:new_qi_apps/pages/mainMenu.dart'; // Import untuk AndroidID
 import '../component/my_button.dart';
 import '../component/my_textfield.dart';
@@ -29,7 +30,9 @@ class _LoginPageState extends State<LoginPage> {
 
   String androidID = ""; // Variabel untuk menyimpan AndroidID
   String? fcmToken = "";
-  //String? get fcmToken => DBService.get("fCMToken");
+  String buttonText = 'Login'; // Variabel untuk menyimpan teks tombol
+  bool isPressed = false;
+  bool stateLoginAs = false;
 
   @override
   void initState() {
@@ -39,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
     _loadFCMToken(); // Load FCM Token ketika halaman login diinisialisasi
   }
 
-// Mendapatkan AndroidID perangkat menggunakan android_id plugin
+  // Mendapatkan AndroidID perangkat menggunakan android_id plugin
   Future<void> _getAndroidID() async {
     const androidIdPlugin = AndroidId();
     String? androidID = await androidIdPlugin.getId(); // Mendapatkan AndroidID
@@ -47,8 +50,6 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       this.androidID = androidID!; // Simpan AndroidID
     });
-
-    //print(androidID);
 
     // Cek apakah AndroidID sudah terdaftar
     bool isRegistered = await AuthService().checkAndroidID(androidID!);
@@ -65,22 +66,24 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _loadFCMToken() async {
     setState(() {
       fcmToken = DBService.get("fCMToken");
-      //print('fcm login :  $fcmToken');
     });
   }
 
-  // Fungsi untuk melakukan login dengan NRP, password, dan AndroidID
-  Future<void> signUserIn(BuildContext context) async {
+  // Fungsi untuk melakukan login dengan NRP, password, androidId, dan loginAs
+  Future<void> signUserIn(BuildContext context, {required stateLoginAs}) async {
     final nrp = nrpController.text;
     final password = passwordController.text;
+    //bool stateLoginAs = false;
 
     try {
       await AuthService().loginWithNRP(
         nrp: nrp,
         password: password,
         androidId: androidID,
+        loginAs: stateLoginAs, // Tambahkan loginAs ke request
       );
-      //simpan nrp
+
+      // Simpan NRP
       DBService.set("nrp", nrp);
 
       Navigator.pushReplacement(
@@ -89,7 +92,6 @@ class _LoginPageState extends State<LoginPage> {
       );
     } on Exception catch (_) {
       showDialog(
-        // ignore: use_build_context_synchronously
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Login Failed'),
@@ -110,13 +112,23 @@ class _LoginPageState extends State<LoginPage> {
     return await androidIdPlugin.getId();
   }
 
+  // Fungsi untuk mengubah teks tombol setelah ditekan 5 detik
+  void onLongPress() {
+    setState(() {
+      buttonText = 'Login as';
+    });
+  }
+
+  void onLongPressEnd(LongPressEndDetails details) {
+    setState(() {
+      buttonText = 'Login'; // Kembali ke teks awal setelah tombol dilepas
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    //String? fCMToken = DBService.get("fCMToken");
-    //print(fCMToken);
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      //backgroundColor: const Color.fromARGB(255, 0, 247, 255),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -162,53 +174,84 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                MyButton(
-                  onTap: () => signUserIn(context),
-                  text: 'Login',
-                ),
-                const SizedBox(height: 5),
+
+                // GestureDetector untuk menangani long press
                 /*
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Not a member?',
-                      style: TextStyle(color: Colors.grey[700]),
-                    ),
-                    const SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterPage(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Register now',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+                GestureDetector(
+                  onLongPress: () {
+                    Future.delayed(const Duration(seconds: 5), () {
+                      if (isPressed) {
+                        onLongPress(); // Mengubah teks setelah 5 detik
+                      }
+                    });
+                  },
+                  onLongPressStart: (details) {
+                    setState(() {
+                      isPressed = true;
+                    });
+                  },
+                  onLongPressEnd:
+                      onLongPressEnd, // Kembali ke "Login" setelah tombol dilepas
+                  child: MyButton(
+                    onTap: () {
+                      if (buttonText == 'Login') {
+                        // Login biasa
+                        signUserIn(context, stateLoginAs: false);
+                      } else {
+                        // Login as
+                        signUserIn(context, stateLoginAs: true);
+                      }
+                    },
+                    text: buttonText,
+                  ),
                 ),
                 */
-                //const SizedBox(height: 20),
+                // GestureDetector untuk menangani long press
+                GestureDetector(
+                  onLongPress: () {
+                    Future.delayed(const Duration(seconds: 5), () {
+                      if (isPressed) {
+                        onLongPress(); // Mengubah teks menjadi 'Login as' setelah 5 detik
+                      }
+                    });
+                  },
+                  onLongPressStart: (details) {
+                    setState(() {
+                      isPressed = true;
+                    });
+                  },
+                  onLongPressEnd: (details) {
+                    setState(() {
+                      isPressed = false;
+                    });
+                  },
+                  child: MyButton(
+                    onTap: () {
+                      if (buttonText == 'Login') {
+                        // Login biasa
+                        signUserIn(context, stateLoginAs: false);
+                      } else {
+                        // Login as
+                        signUserIn(context, stateLoginAs: true);
+                      }
+                    },
+                    text: buttonText,
+                  ),
+                ),
+
+                const SizedBox(height: 5),
                 FutureBuilder<String?>(
                   future: _getAndroidId(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator(); // Tampilkan loading jika belum selesai
+                      return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
                       return const Text('Error mendapatkan Android ID');
                     } else {
                       return Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Text(
-                          'Device ID: ${snapshot.data ?? "Tidak tersedia"}', //\nFCM : $fcmToken',
+                          'Device ID: ${snapshot.data ?? "Tidak tersedia"}',
                           style: const TextStyle(fontSize: 16),
                         ),
                       );
@@ -220,11 +263,9 @@ class _LoginPageState extends State<LoginPage> {
                   'Supported by QI Agent Plant 2 KIDE',
                   style: TextStyle(
                     color: Colors.blue, // Set the text color to blue
-                    //fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                 ),
-                //const SizedBox(height: 20), // Optional bottom padding
               ],
             ),
           ),
