@@ -67,9 +67,9 @@ class AuthService {
         'nrp': nrp,
         'password': password,
         'androidId': androidID,
-        'loginAs': loginAs,
+        //'loginAs': loginAs,
       };
-      print(data);
+      //print(data);
 
       final response = await http.post(
         Uri.parse('http://$apiIP:$apiPort/auth/login'),
@@ -84,10 +84,12 @@ class AuthService {
         final Map<String, dynamic> responseData = json.decode(response.body);
 
         final String token = responseData['token'];
+        final String role = responseData['role'];
         //print("ini token juga : ");
         //print(token);
 
         // Simpan token ke dalam penyimpanan lokal
+        DBService.set("role", role);
         DBService.set("token", token);
         DBService.set("expired_at",
             DateTime.now().add(const Duration(hours: 6)).toString());
@@ -108,6 +110,7 @@ class AuthService {
   }
 
   // Fungsi untuk mendapatkan role pengguna berdasarkan token
+  /*
   Future<String> getRole(String token) async {
     var response = await http.get(
       Uri.parse("http://$apiIP:$apiPort/api/role"),
@@ -118,6 +121,7 @@ class AuthService {
     var data = jsonDecode(response.body);
     return data["role"];
   }
+  */
 
   // Fungsi untuk memeriksa apakah token masih valid
   bool hasValidToken() {

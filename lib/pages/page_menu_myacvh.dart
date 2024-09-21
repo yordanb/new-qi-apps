@@ -1,3 +1,5 @@
+//kode ke-3
+import 'package:flutter_rating_bar/flutter_rating_bar.dart'; // Ganti dengan flutter_rating_bar
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -18,6 +20,9 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
   late Future<Map<String, dynamic>> futureKPIData;
   late Future<List<Map<String, dynamic>>> futureBarData;
   String? nrp = "";
+  double rating = 3.5; // Default rating value
+  TextEditingController feedbackController =
+      TextEditingController(); // Controller for feedback input
 
   @override
   void initState() {
@@ -31,8 +36,98 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
   Future<void> _loadNRP() async {
     setState(() {
       nrp = DBService.get("nrp");
-      //print('fcm login :  $fcmToken');
     });
+  }
+
+  // Method to show feedback and rating dialog
+  void _showRatingDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Rate Us and Provide Feedback'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RatingBar.builder(
+                initialRating: rating,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemBuilder: (context, _) => const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (newRating) {
+                  setState(() {
+                    rating = newRating;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: feedbackController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Enter your feedback',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                _submitFeedback();
+              },
+              child: const Text('Submit'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Method to submit feedback to the API
+  Future<void> _submitFeedback() async {
+    if (nrp == null || feedbackController.text.isEmpty) {
+      return; // Handle empty NRP or feedback case
+    }
+
+    var apiUrl = "http://209.182.237.240:1880/feedback";
+    try {
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "nrp": nrp,
+          "feedback": feedbackController.text,
+          "rate": rating,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pop(); // Close the dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Feedback submitted successfully')),
+        );
+      } else {
+        throw Exception('Failed to submit feedback');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   @override
@@ -44,6 +139,18 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
           "My KPI Board Acvh",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.favorite,
+              color: Colors.red,
+              size: 24.0,
+            ), // Ikon di dalam AppBar
+            onPressed: () {
+              _showRatingDialog(); // Show the rating dialog when favorite icon is pressed
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

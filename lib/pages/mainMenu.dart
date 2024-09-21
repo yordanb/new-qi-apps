@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../auth/auth_service.dart';
+import '../auth/db_service.dart';
 import '../config/config.dart';
+import 'page_menu_adm_news.dart';
+import 'page_menu_adm_config.dart';
+import 'page_menu_adm_tool.dart';
 import 'page_menu_myacvh.dart';
 import 'page_menu_sap.dart';
 import 'page_menu_ss.dart';
@@ -22,15 +26,25 @@ class CardExample extends StatefulWidget {
 }
 
 class _CardExampleState extends State<CardExample> {
-  final bool _isDarkMode = false;
+  //final bool _isDarkMode = false;
   late Future<Map<String, dynamic>> futureKPIData;
   late Future<List<Map<String, dynamic>>> futureBarData;
+  String? role = "";
 
   @override
   void initState() {
     super.initState();
+    DBService.init();
+    _loadRole();
     futureKPIData = _fetchDataUsersChartKPI();
     futureBarData = _fetchDataUsersChartBar();
+  }
+
+  Future<void> _loadRole() async {
+    setState(() {
+      role = DBService.get("role");
+      print('role user :  $role');
+    });
   }
 
   @override
@@ -271,6 +285,13 @@ class _CardExampleState extends State<CardExample> {
               _buildCard(context, 'SS AB', const PageSSAB()),
               _buildCard(context, 'SAP', const PageMenuSAP()),
               _buildCard(context, 'My Acvh', const PageMenuMyacvh()),
+
+              // Tambahkan card tambahan jika role == Admin
+              if (role == 'Admin') ...[
+                _buildCard(context, 'Config', const PageConfig()),
+                _buildCard(context, 'Tool', const PageTool()),
+                _buildCard(context, 'News', const PageNews()),
+              ],
             ],
           ),
         ],
@@ -369,7 +390,7 @@ class _CardExampleState extends State<CardExample> {
       if (decodedData.containsKey('update') &&
           decodedData['update'] is String) {
         update = decodedData['update'];
-        print(update);
+        //print(update);
         setState(() {}); // Memicu pembaruan UI
       }
 

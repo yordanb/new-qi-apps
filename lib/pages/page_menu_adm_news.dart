@@ -8,14 +8,14 @@ import 'package:new_qi_apps/auth/auth_service.dart';
 import '../config/config.dart'; // Import file config.dart
 //import '../auth/db_service.dart'; // Import DBService to access shared preferences
 
-class PageSSAB extends StatefulWidget {
-  const PageSSAB({super.key});
+class PageNews extends StatefulWidget {
+  const PageNews({super.key});
 
   @override
-  _PageSSABState createState() => _PageSSABState();
+  _PageNewsState createState() => _PageNewsState();
 }
 
-class _PageSSABState extends State<PageSSAB> {
+class _PageNewsState extends State<PageNews> {
   String dataCopiedToWA = "";
   List<dynamic> responseData = [];
   String formattedString = "";
