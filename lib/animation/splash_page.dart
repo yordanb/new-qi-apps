@@ -19,7 +19,7 @@ class _SplashPageState extends State<SplashPage> {
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     });
   }
@@ -32,41 +32,42 @@ class _SplashPageState extends State<SplashPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //Image.asset(
-            //  "assets/images/apple.png",
-            //  width: 200.0,
-            //  height: 200.0,
-            //  fit: BoxFit.cover,
-            //)
-            //  SvgPicture.asset(
-            //   r"assets\images\logo2.svg",
-            //   width: 100,
-            //   // height: 100,
-            // ),
-            // SvgPicture.asset(
-            //   // "assets/images/logo2.svg",
-            //  r"assets\images\logo2.svg",
-            //   // SvgPicture.network(
-            //   //   "https://raw.githubusercontent.com/ducksoupdev/svg-example/master/freesample.svg",
-            //  semanticsLabel: 'Acme Logo',
-            //)
-            //    .animate()
-            //    .fadeIn(
-            //      duration: 2000.ms,
-            //    )
-            //    .scale(
-            //      duration: 2000.ms,
-            //    )
-            //    .move(
-            //      duration: 2000.ms,
-            //    ),
-
+            Image.asset(
+              r"assets/images/Pe.png",
+              width: 200.0,
+              height: 200.0,
+              //width: MediaQuery.of(context).size.width * 0.8,
+              fit: BoxFit.cover,
+            )
+                //  SvgPicture.asset(
+                //   r"assets\images\logo2.svg",
+                //   width: 100,
+                //   // height: 100,
+                // ),
+                // SvgPicture.asset(
+                //   // "assets/images/logo2.svg",
+                //  r"assets\images\logo2.svg",
+                //   // SvgPicture.network(
+                //   //   "https://raw.githubusercontent.com/ducksoupdev/svg-example/master/freesample.svg",
+                //  semanticsLabel: 'Acme Logo',
+                //)
+                .animate()
+                .fadeIn(
+                  duration: 2000.ms,
+                )
+                .scale(
+                  duration: 2000.ms,
+                )
+                .move(
+                  duration: 2000.ms,
+                ),
+/*
             Image.network(
               "https://images.unsplash.com/photo-1484517586036-ed3db9e3749e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
-              // width: 200.0,
+               width: 200.0,
               width: MediaQuery.of(context).size.width * 0.8,
-              // svg
-              height: 200.0,
+               svg
+             / height: 200.0,
               fit: BoxFit.cover,
             )
                 .animate()
@@ -78,7 +79,7 @@ class _SplashPageState extends State<SplashPage> {
                 )
                 .move(
                   duration: 2000.ms,
-                ),
+                ),*/
           ],
         ),
       ),

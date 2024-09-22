@@ -74,6 +74,7 @@ class _PageConfigState extends State<PageConfig> {
                               ),
                             );*/
                           },
+                          /*
                           child: CircleAvatar(
                             radius: 30,
                             backgroundColor:
@@ -86,12 +87,12 @@ class _PageConfigState extends State<PageConfig> {
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                          ),
+                          ),*/
                         ),
-                        title: Text('${snapshot.data![index]['no']}. '
-                            '${snapshot.data![index]['nama']}'),
+                        title: Text('${snapshot.data![index]['id']}. '
+                            '${snapshot.data![index]['Nama']}'),
                         subtitle: Text(
-                          '(${snapshot.data![index]['nrp']})\n ${snapshot.data![index]['crew']}',
+                          '(${snapshot.data![index]['NRP']})\n ${snapshot.data![index]['Crew']}',
                         ),
                       );
                     },
@@ -106,7 +107,7 @@ class _PageConfigState extends State<PageConfig> {
   }
 
   String _buildApiUrl() {
-    return "http://$apiIP:$apiPort/api/ss-ab-plt2";
+    return "http://$apiIP:$apiPort/api/mp";
   }
 
   String crew = "";
@@ -131,9 +132,9 @@ class _PageConfigState extends State<PageConfig> {
       //crew = obj["crew"];
       //print(obj['response']);
       //dataCopiedToWA = obj['wa'];
-      //print(dataCopiedToWA);
+      print(obj['data']);
 
-      return obj['response'];
+      return obj;
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
@@ -155,16 +156,6 @@ class _PageConfigState extends State<PageConfig> {
     } else {
       // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
-    }
-  }
-
-  Color _getAvatarColor(int jmlSS) {
-    if (jmlSS < 1) {
-      ssStatus = "?";
-      return Colors.redAccent;
-    } else {
-      ssStatus = "OK";
-      return Colors.lightGreen;
     }
   }
 

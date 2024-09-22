@@ -42,8 +42,8 @@ dependencies:
   shared_preferences: ^2.3.2
   android_id: ^0.4.0
   flutter_animate: ^4.5.0
-  syncfusion_flutter_charts: ^26.2.14
-  syncfusion_flutter_gauges: ^26.2.14
+  syncfusion_flutter_charts: ^27.1.48
+  syncfusion_flutter_gauges: ^27.1.48
   firebase_core: ^3.4.1
   firebase_messaging: ^15.1.1
   file_picker: ^8.1.2
@@ -75,8 +75,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-assets:
-  - lib/images/
+  assets:
+    - assets/images/Pe.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
