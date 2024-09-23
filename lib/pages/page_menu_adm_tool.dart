@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'dart:convert';
+import '../config/config.dart';
 
 class PageTool extends StatefulWidget {
   const PageTool({super.key});
@@ -55,7 +56,7 @@ class _PageToolState extends State<PageTool> {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://209.182.237.240:8888/'),
+        Uri.parse('http://$apiIP:8888/'),
       );
 
       request.files.add(await http.MultipartFile.fromPath(
@@ -85,7 +86,7 @@ class _PageToolState extends State<PageTool> {
   Future<void> _sendDbRequest(String action) async {
     try {
       final response = await http.post(
-        Uri.parse('http://209.182.237.240:1880/db-tool'),
+        Uri.parse('http://$apiIP:1880/db-tool'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'db': _selectedDB.toLowerCase(), 'action': action}),
       );
@@ -168,6 +169,7 @@ class _PageToolState extends State<PageTool> {
                 });
               },
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -181,6 +183,7 @@ class _PageToolState extends State<PageTool> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

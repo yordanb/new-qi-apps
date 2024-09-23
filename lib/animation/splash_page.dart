@@ -16,7 +16,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -53,13 +53,13 @@ class _SplashPageState extends State<SplashPage> {
                 //)
                 .animate()
                 .fadeIn(
-                  duration: 2000.ms,
+                  duration: 3000.ms,
                 )
                 .scale(
-                  duration: 2000.ms,
+                  duration: 3000.ms,
                 )
                 .move(
-                  duration: 2000.ms,
+                  duration: 3000.ms,
                 ),
 /*
             Image.network(

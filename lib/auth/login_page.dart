@@ -135,12 +135,21 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 150),
+                Image.asset(
+                  r"assets/images/Aira.png",
+                  //width: 450.0,
+                  height: 250.0,
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  fit: BoxFit.cover,
+                ),
+                /*
+                const SizedBox(height: 100),
                 const Icon(
                   Icons.lock,
-                  size: 90,
-                ),
-                const SizedBox(height: 30),
+                  size: 130,
+                ), */
+
+                const SizedBox(height: 50),
                 Text(
                   'Welcome back Innovator, you\'ve been missed!',
                   style: TextStyle(
@@ -258,14 +267,16 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   },
                 ),
-                const SizedBox(height: 130), // Space before the support text
+                const SizedBox(height: 120), // Space before the support text
+                //const SizedBox(height: 10),
                 const Text(
                   'Supported by QI Agent Plant 2 KIDE',
                   style: TextStyle(
-                    color: Colors.blue, // Set the text color to blue
+                    color: Colors.black, // Set the text color to blue
                     fontSize: 16,
                   ),
                 ),
+                const SizedBox(height: 10),
               ],
             ),
           ),
