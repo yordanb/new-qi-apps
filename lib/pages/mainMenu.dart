@@ -304,10 +304,26 @@ class _CardExampleState extends State<CardExample> {
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         splashColor: Colors.blue.withAlpha(30),
+        onTap: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => page),
+          );
+
+          // Jika kembali dengan result true, refresh halaman
+          if (result == true) {
+            setState(() {
+              futureKPIData = _fetchDataUsersChartKPI();
+              futureBarData = _fetchDataUsersChartBar();
+            });
+          }
+        },
+        /*
         onTap: () {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => page));
         },
+        */
         child: SizedBox(
           width: 100,
           height: 100,

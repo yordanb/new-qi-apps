@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import '../pages_detail/page_detil_jarvis.dart'; // Import halaman detail
+//import '../pages_detail/page_detil_jarvis.dart'; // Import halaman detail
 import '../config/config.dart'; // Import file config.dart
 import 'package:new_qi_apps/auth/auth_service.dart';
 

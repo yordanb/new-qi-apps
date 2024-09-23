@@ -128,16 +128,15 @@ class _PageSAPState extends State<PageMenuSAP> {
                         leading: InkWell(
                           onTap: () {
                             // Navigasi ke halaman detail dan kirim data NRP
-                            /*
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => PageDetilSAP(
-                                  nrp: snapshot.data![index]['mp_nrp'],
+                                  nrp: snapshot.data![index]['nrp'],
+                                  crew: snapshot.data![index]['crew'],
                                 ),
                               ),
                             );
-                            */
                           },
                           child: CircleAvatar(
                             radius: 45,
