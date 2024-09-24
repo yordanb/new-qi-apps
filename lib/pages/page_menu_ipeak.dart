@@ -16,14 +16,14 @@ class PageIpeak extends StatefulWidget {
 class _PageIpeakState extends State<PageIpeak> {
   //final String _selectedMenu1 = "ss";
   String _selectedMenu2 = "staff";
-  String _selectedMenu3 = "pch";
+  String _selectedMenu3 = "plt2";
   String dataCopiedToWA = "";
   List<dynamic> responseData = [];
   String formattedString = "";
 
   //List<String> menu1Items = ["ss"];
   Map<String, List<String>> menu2Items = {
-    "staff": ["pch", "sse", "big wheel", "tere", "lce", "psc", "plt2"],
+    "staff": ["plt2", "pch", "sse", "big wheel", "tere", "lce", "psc"],
     "mech": ["pch", "mobile", "big wheel", "lighting", "pumping"]
   };
 
@@ -172,7 +172,7 @@ class _PageIpeakState extends State<PageIpeak> {
   String _buildApiUrl() {
     switch (_selectedMenu3) {
       case 'plt2':
-        return "http://$apiIP:$apiPort/api/ipeak-staff-rank";
+        return "http://$apiIP:$apiPort/api/ipeak-allstaff-plt2";
       case 'zero':
         return "http://$apiIP:$apiPort/api/ipeak-mech-zero";
       default:
