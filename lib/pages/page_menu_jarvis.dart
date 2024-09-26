@@ -182,7 +182,7 @@ class _PageJarvisState extends State<PageJarvis> {
 
   String crew = "";
   Future<List<dynamic>> _fecthDataUsers() async {
-    _fecthDataUsersWA();
+    //_fecthDataUsersWA();
     // Ambil token yang disimpan
 
     String apiUrl = _buildApiUrl();
@@ -205,6 +205,7 @@ class _PageJarvisState extends State<PageJarvis> {
     }
   }
 
+  /*
   Future<String> _fecthDataUsersWA() async {
     String apiUrl = _buildApiUrl();
     var result = await http.get(
@@ -224,6 +225,7 @@ class _PageJarvisState extends State<PageJarvis> {
       throw Exception('Failed to load data');
     }
   }
+  */
 
   Future<String> _fetchLastUpdateData() async {
     String apiUrl = _buildApiUrl();
