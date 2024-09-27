@@ -232,10 +232,13 @@ class _CardExampleState extends State<CardExample> {
                             ),
                             primaryYAxis: NumericAxis(
                               title: AxisTitle(
-                                text: (kpiTitle == "SS Zero Mech" ||
-                                        kpiTitle == "SS Zero Staff")
+                                text: (kpiTitle.contains("Zero"))
                                     ? 'Jumlah MP'
-                                    : 'Acvh (%)',
+                                    : (kpiTitle.contains("Acvh"))
+                                        ? 'Acvh (%)'
+                                        : (kpiTitle == "Approval")
+                                            ? 'Jumlah SS'
+                                            : 'Acvh (%)', // Default title
                               ),
                             ),
                             series: <CartesianSeries>[
@@ -246,17 +249,40 @@ class _CardExampleState extends State<CardExample> {
                                     double.parse(data["value"]),
                                 pointColorMapper: (Map data, _) {
                                   double value = double.parse(data["value"]);
-                                  if (value < 25) {
-                                    return Colors.red;
-                                  } else if (value >= 25 && value < 100) {
-                                    return Colors.yellow;
-                                  } else {
-                                    return Colors.green;
+
+                                  // Kondisi untuk KPI dengan kata kunci "Acvh"
+                                  if (kpiTitle.contains("Acvh")) {
+                                    if (value < 25) {
+                                      return Colors.red;
+                                    } else if (value >= 25 && value < 100) {
+                                      return Colors.yellow;
+                                    } else {
+                                      return Colors.green;
+                                    }
                                   }
+
+                                  // Kondisi untuk KPI dengan kata kunci "Zero"
+                                  if (kpiTitle.contains("Zero")) {
+                                    return Colors.red; // Semua merah
+                                  }
+
+                                  // Kondisi untuk KPI "Approval"
+                                  if (kpiTitle == "Approval") {
+                                    if (value < 25) {
+                                      return Colors.green;
+                                    } else if (value >= 25 && value < 100) {
+                                      return Colors.yellow;
+                                    } else {
+                                      return Colors.red;
+                                    }
+                                  }
+
+                                  // Default behavior (jika tidak ada keyword yang dikenali)
+                                  return Colors.green;
                                 },
                                 dataLabelSettings:
                                     const DataLabelSettings(isVisible: true),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -337,11 +363,11 @@ class _CardExampleState extends State<CardExample> {
 
   Future<List<Map<String, dynamic>>> _fetchDataUsersChartBar() async {
     String apiUrl1 = "http://$apiIP:$apiPort/api/ss-all-plt2";
-
     String apiUrl2 = "http://$apiIP:$apiPort/api/jarvis-all-plt2";
     String apiUrl3 = "http://$apiIP:$apiPort/api/ipeak-all-plt2";
     String apiUrl4 = "http://$apiIP:$apiPort/api/ss-zero-mech-plt2";
     String apiUrl5 = "http://$apiIP:$apiPort/api/ss-zero-staff-plt2";
+    String apiUrl6 = "http://$apiIP:$apiPort/api/ss-approval";
 
     var responses = await Future.wait([
       http.get(Uri.parse(apiUrl1),
@@ -353,6 +379,8 @@ class _CardExampleState extends State<CardExample> {
       http.get(Uri.parse(apiUrl4),
           headers: {'Authorization': 'Bearer $userToken'}),
       http.get(Uri.parse(apiUrl5),
+          headers: {'Authorization': 'Bearer $userToken'}),
+      http.get(Uri.parse(apiUrl6),
           headers: {'Authorization': 'Bearer $userToken'}),
     ]);
 
@@ -382,6 +410,11 @@ class _CardExampleState extends State<CardExample> {
           "kpi": json.decode(responses[4].body)['kpi'],
           "response": List<Map<String, dynamic>>.from(
               json.decode(responses[4].body)['response']),
+        },
+        {
+          "kpi": json.decode(responses[5].body)['kpi'],
+          "response": List<Map<String, dynamic>>.from(
+              json.decode(responses[5].body)['response']),
         },
       ];
     } else {
