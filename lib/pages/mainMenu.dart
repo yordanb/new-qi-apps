@@ -236,7 +236,7 @@ class _CardExampleState extends State<CardExample> {
                                     ? 'Jumlah MP'
                                     : (kpiTitle.contains("Acvh"))
                                         ? 'Acvh (%)'
-                                        : (kpiTitle == "Approval")
+                                        : (kpiTitle == "Pending Approval")
                                             ? 'Jumlah SS'
                                             : 'Acvh (%)', // Default title
                               ),
@@ -267,7 +267,7 @@ class _CardExampleState extends State<CardExample> {
                                   }
 
                                   // Kondisi untuk KPI "Approval"
-                                  if (kpiTitle == "Approval") {
+                                  if (kpiTitle == "Pending Approval") {
                                     if (value < 25) {
                                       return Colors.green;
                                     } else if (value >= 25 && value < 100) {
