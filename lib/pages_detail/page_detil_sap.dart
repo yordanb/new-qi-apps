@@ -17,13 +17,13 @@ class PageDetilSAP extends StatefulWidget {
 
 class _PageDetilSAPState extends State<PageDetilSAP> {
   String nama = "Loading...";
-  int hariHadir = 0;
-  int kta = 0;
-  double ktaAcvh = 0.0;
-  int tta = 0;
-  double ttaAcvh = 0.0;
-  int ta = 0;
-  int ka = 0;
+  String hariHadir = "0";
+  String kta = "0";
+  String ktaAcvh = "0";
+  String tta = "0";
+  String ttaAcvh = "0";
+  String ta = "0";
+  String ka = "0";
   double sapAcvh = 0.0;
   String lastUpdate = "Loading...";
   String crew = "Loading...";
@@ -57,18 +57,14 @@ class _PageDetilSAPState extends State<PageDetilSAP> {
           // Update state dengan data dari API
           nama = data['nama'] ?? 'Unknown';
           hariHadir = data['response'][0]['hari_hadir'] ?? 0;
-          ktaAcvh =
-              double.tryParse(data['response'][0]['kta_acvh'].toString()) ??
-                  0.0;
-          ttaAcvh =
-              double.tryParse(data['response'][0]['tta_acvh'].toString()) ??
-                  0.0;
+          kta = data['response'][0]['kta_comp'] ?? 0;
+          tta = data['response'][0]['tta_comp'] ?? 0;
+
+          ktaAcvh = data['response'][0]['kta_acvh'] ?? 0.0;
+          ttaAcvh = data['response'][0]['tta_acvh'] ?? 0.0;
           ta = data['response'][0]['ta'] ?? 0;
           ka = data['response'][0]['ka'] ?? 0;
-          sapAcvh = data['response'][0]['acvh_sap'] != null
-              ? double.tryParse(data['response'][0]['acvh_sap'].toString()) ??
-                  0.0
-              : 0.0;
+          sapAcvh = double.tryParse(data['response'][0]['acvh_sap']) ?? 0.0;
           lastUpdate = data['update'] ?? 'No Data';
         });
       } else {
@@ -164,7 +160,7 @@ class _PageDetilSAPState extends State<PageDetilSAP> {
                 ),
                 const SizedBox(width: 30),
                 Text(
-                  'Acvh KTA : $ktaAcvh%',
+                  'Acvh KTA : $ktaAcvh %',
                   style: const TextStyle(fontSize: 20),
                 ),
               ],
@@ -179,7 +175,7 @@ class _PageDetilSAPState extends State<PageDetilSAP> {
                 ),
                 const SizedBox(width: 30),
                 Text(
-                  'Acvh TTA : $ttaAcvh%',
+                  'Acvh TTA : $ttaAcvh %',
                   style: const TextStyle(fontSize: 20),
                 ),
               ],

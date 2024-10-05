@@ -232,7 +232,8 @@ class _CardExampleState extends State<CardExample> {
                             ),
                             primaryYAxis: NumericAxis(
                               title: AxisTitle(
-                                text: (kpiTitle.contains("Zero"))
+                                text: (kpiTitle.contains("Zero") ||
+                                        kpiTitle.contains("5"))
                                     ? 'Jumlah MP'
                                     : (kpiTitle.contains("Acvh"))
                                         ? 'Acvh (%)'
@@ -278,7 +279,7 @@ class _CardExampleState extends State<CardExample> {
                                   }
 
                                   // Default behavior (jika tidak ada keyword yang dikenali)
-                                  return Colors.green;
+                                  return Colors.red;
                                 },
                                 dataLabelSettings:
                                     const DataLabelSettings(isVisible: true),
@@ -368,6 +369,8 @@ class _CardExampleState extends State<CardExample> {
     String apiUrl4 = "http://$apiIP:$apiPort/api/ss-zero-mech-plt2";
     String apiUrl5 = "http://$apiIP:$apiPort/api/ss-zero-staff-plt2";
     String apiUrl6 = "http://$apiIP:$apiPort/api/ss-approval";
+    String apiUrl7 = "http://$apiIP:$apiPort/api/ss-5-mech-plt2";
+    String apiUrl8 = "http://$apiIP:$apiPort/api/ss-5-staff-plt2";
 
     var responses = await Future.wait([
       http.get(Uri.parse(apiUrl1),
@@ -381,6 +384,10 @@ class _CardExampleState extends State<CardExample> {
       http.get(Uri.parse(apiUrl5),
           headers: {'Authorization': 'Bearer $userToken'}),
       http.get(Uri.parse(apiUrl6),
+          headers: {'Authorization': 'Bearer $userToken'}),
+      http.get(Uri.parse(apiUrl7),
+          headers: {'Authorization': 'Bearer $userToken'}),
+      http.get(Uri.parse(apiUrl8),
           headers: {'Authorization': 'Bearer $userToken'}),
     ]);
 
@@ -415,6 +422,16 @@ class _CardExampleState extends State<CardExample> {
           "kpi": json.decode(responses[5].body)['kpi'],
           "response": List<Map<String, dynamic>>.from(
               json.decode(responses[5].body)['response']),
+        },
+        {
+          "kpi": json.decode(responses[6].body)['kpi'],
+          "response": List<Map<String, dynamic>>.from(
+              json.decode(responses[6].body)['response']),
+        },
+        {
+          "kpi": json.decode(responses[7].body)['kpi'],
+          "response": List<Map<String, dynamic>>.from(
+              json.decode(responses[7].body)['response']),
         },
       ];
     } else {
