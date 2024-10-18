@@ -1,6 +1,7 @@
 // ignore_for_file: camel_case_types, prefer_typing_uninitialized_variables
 
 import '../auth/login_page.dart';
+import '../pages/mainMenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 //import 'package:flutter_svg/svg.dart';
@@ -20,6 +21,7 @@ class _SplashPageState extends State<SplashPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
+        //MaterialPageRoute(builder: (context) => const CardExample()),
       );
     });
   }

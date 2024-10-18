@@ -57,15 +57,15 @@ class _PageDetilSAPState extends State<PageDetilSAP> {
         setState(() {
           // Update state dengan data dari API
           nama = data['nama'] ?? 'Unknown';
-          hariHadir = data['response']['hari_hadir'] ?? 0;
-          kta = data['response']['kta_comp'] ?? 0;
-          tta = data['response']['tta_comp'] ?? 0;
+          hariHadir = data['response'][0]['hari_hadir'] ?? 0;
+          kta = data['response'][0]['kta_comp'] ?? 0;
+          tta = data['response'][0]['tta_comp'] ?? 0;
 
-          ktaAcvh = data['response']['kta_acvh'] ?? 0.0;
-          ttaAcvh = data['response']['tta_acvh'] ?? 0.0;
-          ta = data['response']['ta'] ?? 0;
-          ka = data['response']['ka'] ?? 0;
-          sapAcvh = double.tryParse(data['response']['acvh_sap']) ?? 0.0;
+          ktaAcvh = data['response'][0]['kta_acvh'] ?? 0.0;
+          ttaAcvh = data['response'][0]['tta_acvh'] ?? 0.0;
+          ta = data['response'][0]['ta'] ?? 0;
+          ka = data['response'][0]['ka'] ?? 0;
+          sapAcvh = double.tryParse(data['response'][0]['acvh_sap']) ?? 0.0;
           lastUpdate = data['update'] ?? 'No Data';
         });
       } else {

@@ -20,6 +20,9 @@ class AuthService {
   // Mengecek apakah AndroidID sudah terdaftar
   Future<bool> checkAndroidID(String androidID) async {
     try {
+      final String token;
+      final String nrp;
+      final String role;
       final response = await http.post(
         Uri.parse('http://$apiIP:$apiPort/auth/id-cek'),
         headers: {
@@ -31,11 +34,16 @@ class AuthService {
       );
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        //print(responseData);
+        print(responseData);
         if (responseData['status'] == "already_registered") {
+          token = responseData['token'];
+          nrp = responseData['nrp'];
+          role = responseData['role'];
+          DBService.set("token", token);
+          DBService.set("nrp", nrp);
+          DBService.set("role", role);
           return true;
         }
-        // Mengembalikan true jika sudah terdaftar
       }
       return false;
     } catch (err) {

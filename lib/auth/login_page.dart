@@ -59,6 +59,11 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(builder: (context) => const RegisterPage()),
       );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const CardExample()),
+      );
     }
   }
 
@@ -85,11 +90,12 @@ class _LoginPageState extends State<LoginPage> {
 
       // Simpan NRP
       DBService.set("nrp", nrp);
-
+/*
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const CardExample()),
       );
+      */
     } on Exception catch (_) {
       showDialog(
         context: context,
@@ -151,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 50),
                 Text(
-                  'Welcome back Innovator, you\'ve been missed!',
+                  'Welcome back Innovator,\n you\'ve been missed!',
                   style: TextStyle(
                     color: Colors.grey[700],
                     fontSize: 16,

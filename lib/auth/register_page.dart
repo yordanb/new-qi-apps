@@ -190,6 +190,7 @@ import 'package:new_qi_apps/auth/login_page.dart';
 import '../component/my_button.dart';
 import '../component/my_textfield.dart';
 import '../config/config.dart';
+import '../pages/mainMenu.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -268,10 +269,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+            /*
                 builder: (context) => const LoginPage(
                       isAlreadyRegistered: true,
                     )),
+                    */
           );
         } else {
           // Handle unknown errors

@@ -37,6 +37,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
     setState(() {
       nrp = DBService.get("nrp");
     });
+    //print(nrp);
   }
 
   // Method to show feedback and rating dialog
@@ -377,6 +378,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
 
   Future<List<Map<String, dynamic>>> _fetchDataUsersChartBar() async {
     String apiUrl1 = "http://$apiIP:$apiPort/api/all-data/$nrp";
+    print(apiUrl1);
 
     var responses = await Future.wait([
       http.get(Uri.parse(apiUrl1),
@@ -408,7 +410,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
 
     if (response.statusCode == 200) {
       var decodedData = jsonDecode(response.body);
-      //print(decodedData);
+      print(decodedData);
 
       // Extract update value
       if (decodedData.containsKey('update') &&

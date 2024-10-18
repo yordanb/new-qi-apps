@@ -30,20 +30,23 @@ class _CardExampleState extends State<CardExample> {
   late Future<Map<String, dynamic>> futureKPIData;
   late Future<List<Map<String, dynamic>>> futureBarData;
   String? role = "";
+  String? nrp = "";
 
   @override
   void initState() {
     super.initState();
     DBService.init();
-    _loadRole();
+    _loadRoleAndNRP();
     futureKPIData = _fetchDataUsersChartKPI();
     futureBarData = _fetchDataUsersChartBar();
   }
 
-  Future<void> _loadRole() async {
+  Future<void> _loadRoleAndNRP() async {
     setState(() {
       role = DBService.get("role");
-      print('role user :  $role');
+      nrp = DBService.get("nrp");
+      //print('role user :  $role');
+      //print('nrp user :  $nrp');
     });
   }
 
