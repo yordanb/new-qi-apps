@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../config/config.dart'; // Import file config.dart
+import '../auth/auth_service.dart';
 
-class PageDetilESIC extends StatelessWidget {
+class PageDetiliPeak extends StatelessWidget {
   final String nrp; // Tambahkan deklarasi nrp
-  const PageDetilESIC({super.key, required this.nrp}); // Perbaiki konstruktor
+  const PageDetiliPeak({super.key, required this.nrp}); // Perbaiki konstruktor
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('JUDUL SS'),
+        title: const Text('Data Ipeak'),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -29,8 +30,9 @@ class PageDetilESIC extends StatelessWidget {
           ),
         ),
       ),
+      /*
       body: FutureBuilder<List<dynamic>>(
-        future: _fecthDataUsers(),
+        future: _fetchDataUsers(),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -65,20 +67,68 @@ class PageDetilESIC extends StatelessWidget {
           }
         },
       ),
+      */
     );
   }
 
-  Future<List<dynamic>> _fecthDataUsers() async {
-    final String apiUrl =
-        "http:///$apiIP:$apiPort/api/jarvis/$nrp"; // Gunakan data NRP yang diterima
-    var result = await http.get(Uri.parse(apiUrl));
-    return json.decode(result.body)['response'];
+  // Fungsi untuk mengambil data pengguna dari API
+  Future<List<dynamic>> _fetchDataUsers() async {
+    final String apiUrl = "http://$apiIP:$apiPort/api/ipeak/$nrp";
+
+    try {
+      var result = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        },
+      );
+
+      // Parsing hasil body
+      var data = json.decode(result.body);
+      print(result);
+
+      // Pastikan respons memiliki data yang sesuai
+      if (data != null && data['response'] != null) {
+        return data['response'];
+      } else {
+        // Kembalikan array kosong jika tidak ada data 'response'
+        return [];
+      }
+    } catch (error) {
+      // Tangani error dengan log atau melakukan tindakan lain
+      print("Error fetching data: $error");
+      // Kembalikan array kosong jika terjadi error
+      return [];
+    }
   }
 
+  // Fungsi untuk mengambil update terakhir dari API
   Future<String> _fetchLastUpdateData() async {
-    final String apiUrl = "http:///$apiIP:$apiPort/api/jarvis/$nrp";
-    var result = await http.get(Uri.parse(apiUrl));
-    return json.decode(result.body)['update'];
+    final String apiUrl = "http://$apiIP:$apiPort/api/ipeak/$nrp";
+
+    try {
+      var result = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        },
+      );
+
+      // Parsing hasil body
+      var data = json.decode(result.body);
+
+      // Cek apakah data atau field 'update' bernilai null
+      if (data == null || data['update'] == null) {
+        return "No Data";
+      }
+
+      return data['update'];
+    } catch (error) {
+      // Handle error, misalnya return "No Data" atau error lainnya
+      return "No Data"; // Mengembalikan "No Data" jika terjadi error
+    }
   }
 
   Color _getAvatarColor(int jmlSS) {

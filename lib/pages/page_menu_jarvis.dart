@@ -1,8 +1,8 @@
+//kode ke-2
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
-//import '../pages_detail/page_detil_jarvis.dart'; // Import halaman detail
 import '../config/config.dart'; // Import file config.dart
 import 'package:new_qi_apps/auth/auth_service.dart';
 
@@ -14,14 +14,12 @@ class PageJarvis extends StatefulWidget {
 }
 
 class _PageJarvisState extends State<PageJarvis> {
-  //final String _selectedMenu1 = "ss";
   String _selectedMenu2 = "staff";
   String _selectedMenu3 = "plt2";
-  String dataCopiedToWA = "";
+  String dataCopiedToWA = ""; // Variabel untuk data yang akan disalin
   List<dynamic> responseData = [];
   String formattedString = "";
 
-  //List<String> menu1Items = ["ss"];
   Map<String, List<String>> menu2Items = {
     "staff": ["plt2", "pch", "sse", "big wheel", "tere", "lce", "psc"],
     "mech": ["pch", "mobile", "big wheel", "lighting", "pumping"]
@@ -51,8 +49,12 @@ class _PageJarvisState extends State<PageJarvis> {
         actions: [
           IconButton(
             onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: dataCopiedToWA));
-              _showSnackBar(context, 'Data telah disalin');
+              if (dataCopiedToWA.isNotEmpty) {
+                await Clipboard.setData(ClipboardData(text: dataCopiedToWA));
+                _showSnackBar(context, 'Data telah disalin ke clipboard');
+              } else {
+                _showSnackBar(context, 'Tidak ada data yang disalin');
+              }
             },
             icon: const Icon(Icons.content_copy),
           ),
@@ -63,21 +65,6 @@ class _PageJarvisState extends State<PageJarvis> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /*
-              DropdownButton<String>(
-                value: _selectedMenu1,
-                items: menu1Items.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedMenu1 = newValue!;
-                  });
-                },
-              ),*/
               DropdownButton<String>(
                 value: _selectedMenu2,
                 items: menu2Items.keys.map((String value) {
@@ -89,8 +76,8 @@ class _PageJarvisState extends State<PageJarvis> {
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedMenu2 = newValue!;
-                    // Reset selected menu 3 when menu 2 changes
-                    _selectedMenu3 = menu2Items[_selectedMenu2]![0];
+                    _selectedMenu3 =
+                        menu2Items[_selectedMenu2]![0]; // Reset menu3
                   });
                 },
               ),
@@ -112,7 +99,7 @@ class _PageJarvisState extends State<PageJarvis> {
           ),
           Expanded(
             child: FutureBuilder<List<dynamic>>(
-              future: _fecthDataUsers(),
+              future: _fetchDataUsers(),
               builder: (BuildContext context,
                   AsyncSnapshot<List<dynamic>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -125,31 +112,16 @@ class _PageJarvisState extends State<PageJarvis> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return ListTile(
-                        leading: InkWell(
-                          onTap: () {
-                            // Navigasi ke halaman detail dan kirim data NRP
-                            /*
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PageDetilJarvis(
-                                  nrp: snapshot.data![index]['mp_nrp'],
-                                ),
-                              ),
-                            );
-                            */
-                          },
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor:
-                                _getAvatarColor(snapshot.data![index]['doc']),
-                            foregroundColor: Colors.black,
-                            child: Text(
-                              snapshot.data![index]['doc'].toString(),
-                              style: const TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.w400,
-                              ),
+                        leading: CircleAvatar(
+                          radius: 30,
+                          backgroundColor:
+                              _getAvatarColor(snapshot.data![index]['doc']),
+                          foregroundColor: Colors.black,
+                          child: Text(
+                            snapshot.data![index]['doc'].toString(),
+                            style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -180,52 +152,24 @@ class _PageJarvisState extends State<PageJarvis> {
     }
   }
 
-  String crew = "";
-  Future<List<dynamic>> _fecthDataUsers() async {
-    //_fecthDataUsersWA();
-    // Ambil token yang disimpan
-
+  Future<List<dynamic>> _fetchDataUsers() async {
     String apiUrl = _buildApiUrl();
     var result = await http.get(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken',
       },
     );
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
-      //crew = obj["crew"];
-      dataCopiedToWA = obj['wa'];
+      dataCopiedToWA = obj['wa'] ?? ""; // Data yang akan disalin
       return obj['response'];
     } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
     }
   }
-
-  /*
-  Future<String> _fecthDataUsersWA() async {
-    String apiUrl = _buildApiUrl();
-    var result = await http.get(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
-      },
-    );
-
-    if (result.statusCode == 200) {
-      Map<String, dynamic> obj = json.decode(result.body);
-      dataCopiedToWA = obj['response2'] ?? "";
-      return dataCopiedToWA;
-    } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
-      throw Exception('Failed to load data');
-    }
-  }
-  */
 
   Future<String> _fetchLastUpdateData() async {
     String apiUrl = _buildApiUrl();
@@ -233,24 +177,19 @@ class _PageJarvisState extends State<PageJarvis> {
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken',
       },
     );
 
     if (result.statusCode == 200) {
       return json.decode(result.body)['update'];
     } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
     }
   }
 
   Color _getAvatarColor(int jmlDoc) {
-    if (jmlDoc < 1) {
-      return Colors.redAccent;
-    } else {
-      return Colors.lightGreen;
-    }
+    return jmlDoc < 1 ? Colors.redAccent : Colors.lightGreen;
   }
 
   void _showSnackBar(BuildContext context, String message) {

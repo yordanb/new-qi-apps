@@ -1,3 +1,4 @@
+//kode ke-2
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,18 +15,23 @@ class PageMenuSAP extends StatefulWidget {
 }
 
 class _PageSAPState extends State<PageMenuSAP> {
-  //final String _selectedMenu1 = "sap";
   String _selectedMenu2 = "staff";
   String _selectedMenu3 = "pch";
   String dataCopiedToWA = "";
   List<dynamic> responseData = [];
   String formattedString = "";
 
-  //List<String> menu1Items = ["sap"];
   Map<String, List<String>> menu2Items = {
     "staff": ["pch", "sse", "big wheel", "tere", "lce", "psc"],
     "mech": ["pch", "mobile", "big wheel", "lighting", "pumping"]
   };
+
+  @override
+  void initState() {
+    super.initState();
+    // Panggil _fecthDataUsersWA() di awal untuk data yang dipilih
+    _fecthDataUsersWA();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +57,12 @@ class _PageSAPState extends State<PageMenuSAP> {
         actions: [
           IconButton(
             onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: dataCopiedToWA));
-              _showSnackBar(context, 'Data telah disalin');
+              if (dataCopiedToWA.isNotEmpty) {
+                await Clipboard.setData(ClipboardData(text: dataCopiedToWA));
+                _showSnackBar(context, 'Data telah disalin');
+              } else {
+                _showSnackBar(context, 'Data belum tersedia');
+              }
             },
             icon: const Icon(Icons.content_copy),
           ),
@@ -63,21 +73,6 @@ class _PageSAPState extends State<PageMenuSAP> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /*
-              DropdownButton<String>(
-                value: _selectedMenu1,
-                items: menu1Items.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedMenu1 = newValue!;
-                  });
-                },
-              ),*/
               DropdownButton<String>(
                 value: _selectedMenu2,
                 items: menu2Items.keys.map((String value) {
@@ -91,6 +86,8 @@ class _PageSAPState extends State<PageMenuSAP> {
                     _selectedMenu2 = newValue!;
                     // Reset selected menu 3 when menu 2 changes
                     _selectedMenu3 = menu2Items[_selectedMenu2]![0];
+                    // Fetch updated WA data whenever menu 3 changes
+                    _fecthDataUsersWA();
                   });
                 },
               ),
@@ -105,6 +102,8 @@ class _PageSAPState extends State<PageMenuSAP> {
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedMenu3 = newValue!;
+                    // Fetch updated WA data whenever menu 3 changes
+                    _fecthDataUsersWA();
                   });
                 },
               ),
@@ -127,7 +126,6 @@ class _PageSAPState extends State<PageMenuSAP> {
                       return ListTile(
                         leading: InkWell(
                           onTap: () {
-                            // Navigasi ke halaman detail dan kirim data NRP
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -144,7 +142,6 @@ class _PageSAPState extends State<PageMenuSAP> {
                                 formatSAP(snapshot.data![index]['sap'])),
                             foregroundColor: Colors.black,
                             child: Text(
-                              //snapshot.data![index]['sap'].toString(),
                               formatSAP(snapshot.data![index]['sap']),
                               style: const TextStyle(
                                 fontSize: 20,
@@ -185,47 +182,41 @@ class _PageSAPState extends State<PageMenuSAP> {
     }
   }
 
-  String crew = "";
   Future<List<dynamic>> _fecthDataUsers() async {
-    _fecthDataUsersWA();
-    // Ambil token yang disimpan
-
     String apiUrl = _buildApiUrl();
     var result = await http.get(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken',
       },
     );
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
-      //crew = obj["crew"];
-      dataCopiedToWA = obj['wa'];
+      dataCopiedToWA = obj['wa']; // Update dataCopiedToWA secara langsung
       return obj['response'];
     } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
     }
   }
 
-  Future<String> _fecthDataUsersWA() async {
+  Future<void> _fecthDataUsersWA() async {
     String apiUrl = _buildApiUrl();
     var result = await http.get(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken',
       },
     );
 
     if (result.statusCode == 200) {
       Map<String, dynamic> obj = json.decode(result.body);
-      dataCopiedToWA = obj['response2'] ?? "";
-      return dataCopiedToWA;
+      setState(() {
+        dataCopiedToWA = obj['response2'] ?? "";
+      });
     } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
     }
   }
@@ -236,14 +227,13 @@ class _PageSAPState extends State<PageMenuSAP> {
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken',
       },
     );
 
     if (result.statusCode == 200) {
       return json.decode(result.body)['update'];
     } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
     }
   }
@@ -252,15 +242,12 @@ class _PageSAPState extends State<PageMenuSAP> {
     if (sap == null) {
       return Colors.red;
     } else if (sap is String) {
-      // Coba untuk mengonversi nilai string menjadi double
       final double? sapDouble = double.tryParse(sap);
       if (sapDouble == null) {
-        // Jika gagal mengonversi, kembalikan warna merah
         return Colors.red;
       }
-      sap = sapDouble; // Gunakan nilai double yang sudah diubah
+      sap = sapDouble;
     }
-    // Sekarang sap pasti bertipe double, lanjutkan dengan logika seperti sebelumnya
     if (sap < 70) {
       return Colors.redAccent;
     } else if (sap < 150) {
@@ -281,16 +268,13 @@ class _PageSAPState extends State<PageMenuSAP> {
     if (sapData is String) {
       double? sapDouble = double.tryParse(sapData);
       if (sapDouble != null) {
-        String sapString = sapDouble.toStringAsFixed(
-            1); // Mengonversi ke string dengan dua angka di belakang koma
+        String sapString = sapDouble.toStringAsFixed(1);
         if (sapString.endsWith('.00')) {
-          return sapString.substring(
-              0, sapString.length - 3); // Hapus ".00" jika ada
+          return sapString.substring(0, sapString.length - 3);
         }
         return sapString;
       }
     }
-    return sapData
-        .toString(); // Kembalikan nilai asli jika bukan string atau tidak dapat diubah menjadi double
+    return sapData.toString();
   }
 }

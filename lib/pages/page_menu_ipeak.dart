@@ -1,8 +1,9 @@
+//kode ke-2
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
-//import '../pages_detail/page_detil_ipeak.dart'; // Import halaman detail
+import '../pages_detail/page_detil_ipeak.dart'; // Import halaman detail
 import '../config/config.dart';
 import 'package:new_qi_apps/auth/auth_service.dart';
 
@@ -14,14 +15,13 @@ class PageIpeak extends StatefulWidget {
 }
 
 class _PageIpeakState extends State<PageIpeak> {
-  //final String _selectedMenu1 = "ss";
   String _selectedMenu2 = "staff";
   String _selectedMenu3 = "plt2";
-  String dataCopiedToWA = "";
+  String dataCopiedToWA =
+      ""; // Ini akan menyimpan data untuk disalin ke clipboard
   List<dynamic> responseData = [];
   String formattedString = "";
 
-  //List<String> menu1Items = ["ss"];
   Map<String, List<String>> menu2Items = {
     "staff": ["plt2", "pch", "sse", "big wheel", "tere", "lce", "psc"],
     "mech": ["pch", "mobile", "big wheel", "lighting", "pumping"]
@@ -51,8 +51,13 @@ class _PageIpeakState extends State<PageIpeak> {
         actions: [
           IconButton(
             onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: dataCopiedToWA));
-              _showSnackBar(context, 'Data telah disalin');
+              // Pastikan `dataCopiedToWA` tidak kosong sebelum menyalin ke clipboard
+              if (dataCopiedToWA.isNotEmpty) {
+                await Clipboard.setData(ClipboardData(text: dataCopiedToWA));
+                _showSnackBar(context, 'Data telah disalin');
+              } else {
+                _showSnackBar(context, 'Tidak ada data untuk disalin');
+              }
             },
             icon: const Icon(Icons.content_copy),
           ),
@@ -63,21 +68,6 @@ class _PageIpeakState extends State<PageIpeak> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /*
-              DropdownButton<String>(
-                value: _selectedMenu1,
-                items: menu1Items.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedMenu1 = newValue!;
-                  });
-                },
-              ),*/
               DropdownButton<String>(
                 value: _selectedMenu2,
                 items: menu2Items.keys.map((String value) {
@@ -126,18 +116,17 @@ class _PageIpeakState extends State<PageIpeak> {
                     itemBuilder: (BuildContext context, int index) {
                       return ListTile(
                         leading: InkWell(
-                          /*
                           onTap: () {
                             // Navigasi ke halaman detail dan kirim data NRP
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PageDetilESIC(
-                                  nrp: snapshot.data![index]['mp_nrp'],
+                                builder: (context) => PageDetiliPeak(
+                                  nrp: snapshot.data![index]['nrp'],
                                 ),
                               ),
                             );
-                          },*/
+                          },
                           child: CircleAvatar(
                             radius: 30,
                             backgroundColor:
@@ -180,52 +169,25 @@ class _PageIpeakState extends State<PageIpeak> {
     }
   }
 
-  String crew = "";
   Future<List<dynamic>> _fecthDataUsers() async {
-    //_fecthDataUsersWA();
-    // Ambil token yang disimpan
-
     String apiUrl = _buildApiUrl();
     var result = await http.get(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken',
       },
     );
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
-      //crew = obj["crew"];
-      dataCopiedToWA = obj['wa'];
+      // Isi data untuk disalin ke WhatsApp
+      dataCopiedToWA = obj['wa'] ?? '';
       return obj['response'];
     } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
     }
   }
-
-/*
-  Future<String> _fecthDataUsersWA() async {
-    String apiUrl = _buildApiUrl();
-    var result = await http.get(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
-      },
-    );
-
-    if (result.statusCode == 200) {
-      Map<String, dynamic> obj = json.decode(result.body);
-      dataCopiedToWA = obj['response2'] ?? "";
-      return dataCopiedToWA;
-    } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
-      throw Exception('Failed to load data');
-    }
-  }
-  */
 
   Future<String> _fetchLastUpdateData() async {
     String apiUrl = _buildApiUrl();
@@ -233,24 +195,19 @@ class _PageIpeakState extends State<PageIpeak> {
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $userToken', // Menyertakan token ke header
+        'Authorization': 'Bearer $userToken',
       },
     );
 
     if (result.statusCode == 200) {
       return json.decode(result.body)['update'];
     } else {
-      // Jika terjadi kesalahan pada permintaan HTTP, lemparkan Exception
       throw Exception('Failed to load data');
     }
   }
 
   Color _getAvatarColor(int frekAkses) {
-    if (frekAkses < 1) {
-      return Colors.redAccent;
-    } else {
-      return Colors.lightGreen;
-    }
+    return frekAkses < 1 ? Colors.redAccent : Colors.lightGreen;
   }
 
   void _showSnackBar(BuildContext context, String message) {
