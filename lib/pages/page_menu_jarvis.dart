@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:new_qi_apps/pages_detail/page_detil_jarvis.dart';
+import '../auth/db_service.dart';
 import '../config/config.dart'; // Import file config.dart
 import 'package:new_qi_apps/auth/auth_service.dart';
 
@@ -112,16 +114,30 @@ class _PageJarvisState extends State<PageJarvis> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (BuildContext context, int index) {
                       return ListTile(
-                        leading: CircleAvatar(
-                          radius: 30,
-                          backgroundColor:
-                              _getAvatarColor(snapshot.data![index]['doc']),
-                          foregroundColor: Colors.black,
-                          child: Text(
-                            snapshot.data![index]['doc'].toString(),
-                            style: const TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w400,
+                        leading: InkWell(
+                          onTap: () {
+                            // Navigasi ke halaman detail dan kirim data NRP
+                            DBService.set(
+                                "nama", snapshot.data![index]['nama']);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PageDetilJarvis(
+                                    nrp: snapshot.data![index]['nrp']),
+                              ),
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundColor:
+                                _getAvatarColor(snapshot.data![index]['doc']),
+                            foregroundColor: Colors.black,
+                            child: Text(
+                              snapshot.data![index]['doc'].toString(),
+                              style: const TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                         ),

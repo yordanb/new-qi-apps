@@ -38,7 +38,7 @@ class _PageDetilSAPState extends State<PageDetilSAP> {
   // Fungsi untuk mengambil data pengguna dari API
   Future<void> _fetchDataUsers() async {
     final String apiUrl = "http://$apiIP:$apiPort/api/sap/${widget.nrp}";
-    print(apiUrl);
+    //print(apiUrl);
     try {
       var result = await http.get(
         Uri.parse(apiUrl),
