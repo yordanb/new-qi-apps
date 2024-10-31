@@ -134,6 +134,8 @@ class _PageSSState extends State<PageSS> {
                             // Navigasi ke halaman detail dan kirim data NRP
                             DBService.set(
                                 "nama", snapshot.data![index]['nama']);
+                            DBService.set(
+                                "crew", snapshot.data![index]['crew']);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

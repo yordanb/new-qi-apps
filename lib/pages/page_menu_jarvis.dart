@@ -123,7 +123,8 @@ class _PageJarvisState extends State<PageJarvis> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => PageDetilJarvis(
-                                    nrp: snapshot.data![index]['nrp']),
+                                    nrp: snapshot.data![index]['nrp'],
+                                    crew: snapshot.data![index]['crew']),
                               ),
                             );
                           },
