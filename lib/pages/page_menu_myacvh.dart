@@ -20,6 +20,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
   late Future<Map<String, dynamic>> futureKPIData;
   late Future<List<Map<String, dynamic>>> futureBarData;
   String? nrp = "";
+  String? role = "";
   double rating = 3.5; // Default rating value
   TextEditingController feedbackController =
       TextEditingController(); // Controller for feedback input
@@ -36,6 +37,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
   Future<void> _loadNRP() async {
     setState(() {
       nrp = DBService.get("nrp");
+      role = DBService.get("role");
     });
     //print(nrp);
   }
@@ -141,6 +143,19 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
+          if (role ==
+              "Admin") // Icon search hanya tampil jika role adalah Admin
+            IconButton(
+              icon: const Icon(
+                Icons.search,
+                color: Colors.blue,
+                size: 24.0,
+              ),
+              onPressed: () {
+                // Aksi saat ikon pencarian ditekan
+                print("Search icon pressed");
+              },
+            ),
           IconButton(
             icon: const Icon(
               Icons.favorite,
