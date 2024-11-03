@@ -123,13 +123,13 @@ class _PageDetilJarvisState extends State<PageDetilJarvis> {
                 ),
                 Text(
                   '( $crew )',
-                  style: const TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 15),
                 ),
               ],
             ),
-            const Text("Judul yang telah dibaca :",
-                style: TextStyle(fontSize: 20)),
-            const SizedBox(height: 10),
+            const Text("Judul yang telah dibaca bulan lalu :",
+                style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 5),
             Expanded(
               child: ListView.builder(
                 itemCount: judulList.length,
@@ -138,7 +138,7 @@ class _PageDetilJarvisState extends State<PageDetilJarvis> {
                       .split('- revisi'); // Memisahkan judul dan revisi
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: Colors.grey,
                       child: Text(
                         '${index + 1}',
                         style: const TextStyle(
@@ -150,17 +150,51 @@ class _PageDetilJarvisState extends State<PageDetilJarvis> {
                     title: Text(
                       judul[0].trim(), // Judul utama
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w500),
+                          fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                     subtitle: Text(
                       'Revisi: ${judul.length > 1 ? judul[1].trim() : "0"}',
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                      style: const TextStyle(fontSize: 15, color: Colors.grey),
                     ),
                   );
                 },
               ),
             ),
             const SizedBox(height: 10),
+            const Text("Judul yang telah dibaca bulan ini :",
+                style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 5),
+            Expanded(
+              child: ListView.builder(
+                itemCount: judulList.length,
+                itemBuilder: (context, index) {
+                  final judul = judulList[index]
+                      .split('- revisi'); // Memisahkan judul dan revisi
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.lightGreen,
+                      child: Text(
+                        '${index + 1}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      judul[0].trim(), // Judul utama
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w500),
+                    ),
+                    subtitle: Text(
+                      'Revisi: ${judul.length > 1 ? judul[1].trim() : "0"}',
+                      style: const TextStyle(fontSize: 15, color: Colors.grey),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 5),
             Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
