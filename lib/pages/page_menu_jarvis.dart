@@ -181,6 +181,7 @@ class _PageJarvisState extends State<PageJarvis> {
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
+      print(obj['response']);
       dataCopiedToWA = obj['wa'] ?? ""; // Data yang akan disalin
       return obj['response'];
     } else {
