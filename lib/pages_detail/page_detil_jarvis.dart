@@ -368,10 +368,10 @@ class _PageDetilJarvisState extends State<PageDetilJarvis> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             Container(
-              width: 70,
-              height: 70,
+              width: 60,
+              height: 60,
               decoration: BoxDecoration(
                 color: _getAvatarColor(jarvisAchv),
                 shape: BoxShape.circle,
@@ -387,7 +387,7 @@ class _PageDetilJarvisState extends State<PageDetilJarvis> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -403,13 +403,13 @@ class _PageDetilJarvisState extends State<PageDetilJarvis> {
                 ),
                 Text(
                   '( $crew )',
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(fontSize: 18),
                 ),
               ],
             ),
             const Text("Judul yang telah dibaca bulan lalu :",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
                 itemCount: judulList.length,
@@ -445,7 +445,7 @@ class _PageDetilJarvisState extends State<PageDetilJarvis> {
                     fontSize: 18,
                     color: Colors.green,
                     fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
             Expanded(
               child: hasAccessedJarvis
                   ? ListView.builder(

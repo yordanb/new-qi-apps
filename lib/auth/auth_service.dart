@@ -1,3 +1,4 @@
+//kode ke-1
 import 'dart:convert';
 import '../config/config.dart';
 import 'db_service.dart';
@@ -34,7 +35,7 @@ class AuthService {
       );
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        print(responseData);
+        //print(responseData);
         if (responseData['status'] == "already_registered") {
           token = responseData['token'];
           nrp = responseData['nrp'];
