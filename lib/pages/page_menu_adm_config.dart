@@ -50,13 +50,12 @@ class _PageConfigState extends State<PageConfig> {
   }
 
   Future<void> _updateData(
-      int index, String newName, String newNrp, String newCrew) async {
-    String apiUrl = "http://209.182.237.240:1880/edit";
+      String currentNrp, String newName, String newNrp, String newCrew) async {
+    String apiUrl = "http://$apiIP:$apiPort/api/mp/$currentNrp";
 
-    var body = jsonEncode(
-        {"index": index, "nama": newName, "nrp": newNrp, "crew": newCrew});
+    var body = jsonEncode({"Nama": newName, "NRP": newNrp, "Crew": newCrew});
 
-    final response = await http.post(
+    final response = await http.put(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +65,7 @@ class _PageConfigState extends State<PageConfig> {
     );
 
     if (response.statusCode == 200) {
-      print("Update successful");
+      //print("Update successful");
       fetchData();
     } else {
       throw Exception('Failed to update data');
@@ -74,10 +73,10 @@ class _PageConfigState extends State<PageConfig> {
   }
 
   Future<void> _addData(String newName, String newNrp, String newCrew) async {
-    String apiUrl = "http://209.182.237.240:1880/add";
+    String apiUrl = _buildApiUrl();
 
-    var body = jsonEncode({"nama": newName, "nrp": newNrp, "crew": newCrew});
-
+    var body = jsonEncode({"Nama": newName, "NRP": newNrp, "Crew": newCrew});
+    //print(body);
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -88,21 +87,21 @@ class _PageConfigState extends State<PageConfig> {
     );
 
     if (response.statusCode == 200) {
-      print("Addition successful");
+      //print("Addition successful");
       fetchData();
     } else {
       throw Exception('Failed to add data');
     }
   }
 
-  void _editItem(
-      int index, String currentName, String currentNrp, String currentCrew) {
+  void _editItem(String currentName, String currentNrp, String currentCrew) {
     TextEditingController nameController =
         TextEditingController(text: currentName);
     TextEditingController nrpController =
         TextEditingController(text: currentNrp);
     TextEditingController crewController =
         TextEditingController(text: currentCrew);
+    var nrpSaiki = currentNrp;
 
     showDialog(
       context: context,
@@ -136,7 +135,7 @@ class _PageConfigState extends State<PageConfig> {
             ElevatedButton(
               child: const Text('Update'),
               onPressed: () async {
-                await _updateData(index, nameController.text,
+                await _updateData(nrpSaiki, nameController.text,
                     nrpController.text, crewController.text);
                 Navigator.of(context).pop();
               },
@@ -156,7 +155,7 @@ class _PageConfigState extends State<PageConfig> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Tambah Data Man Power'),
+          title: const Text('Tambah Data ManPower'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -206,6 +205,53 @@ class _PageConfigState extends State<PageConfig> {
     });
   }
 
+  Future<void> _deleteData(String nrp) async {
+    String apiUrl = "http://$apiIP:$apiPort/api/mp/$nrp";
+
+    final response = await http.delete(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      //print("Deletion successful");
+      fetchData();
+    } else {
+      throw Exception('Failed to delete data');
+    }
+  }
+
+  void _confirmDelete(String nrp) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Hapus'),
+          content: Text('Apakah Anda yakin ingin menghapus NRP $nrp?'),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () async {
+                await _deleteData(nrp);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -219,7 +265,7 @@ class _PageConfigState extends State<PageConfig> {
                 ),
                 onChanged: (query) => _filterData(query),
               )
-            : const Text('Data Man Power'),
+            : const Text('Data ManPower'),
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add),
@@ -255,14 +301,13 @@ class _PageConfigState extends State<PageConfig> {
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () {
-                          _editItem(
-                              index, item['nama'], item['nrp'], item['crew']);
+                          _editItem(item['nama'], item['nrp'], item['crew']);
                         },
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          // Fungsi hapus bisa ditambahkan di sini
+                          _confirmDelete(item['nrp']);
                         },
                       ),
                     ],
