@@ -541,6 +541,7 @@ class _PageConfigState extends State<PageConfig> {
   void initState() {
     super.initState();
     fetchDataMP();
+    //fetchDataUser();
   }
 
   String _buildApiUrlMP() => "http://$apiIP:$apiPort/api/mp";
@@ -652,14 +653,16 @@ class _PageConfigState extends State<PageConfig> {
     );
   }
 
-  void _editItemUser(
-      String currentName, String currentNrp, String currentLevel) {
+  void _editItemUser(String currentName, String currentNrp, String currentLevel,
+      String currentAndroidID) {
     TextEditingController nameController =
         TextEditingController(text: currentName);
     TextEditingController nrpController =
         TextEditingController(text: currentNrp);
     TextEditingController levelController =
         TextEditingController(text: currentLevel);
+    TextEditingController androidIDController =
+        TextEditingController(text: currentAndroidID);
     var nrpSaiki = currentNrp;
     String? selectedLevel;
     selectedLevel = levelController.text;
@@ -695,6 +698,10 @@ class _PageConfigState extends State<PageConfig> {
                   });
                 },
               ),
+              TextField(
+                controller: androidIDController,
+                decoration: const InputDecoration(labelText: 'Android ID'),
+              ),
             ],
           ),
           actions: [
@@ -707,8 +714,12 @@ class _PageConfigState extends State<PageConfig> {
             ElevatedButton(
               child: const Text('Update'),
               onPressed: () async {
-                await _updateDataUser(nrpSaiki, nameController.text,
-                    nrpController.text, selectedLevel!);
+                await _updateDataUser(
+                    nrpSaiki,
+                    nameController.text,
+                    nrpController.text,
+                    selectedLevel!,
+                    androidIDController.text);
                 Navigator.of(context).pop();
               },
             ),
@@ -835,12 +846,17 @@ class _PageConfigState extends State<PageConfig> {
     }
   }
 
-  Future<void> _updateDataUser(
-      String currentNrp, String newName, String newNrp, String newLevel) async {
+  Future<void> _updateDataUser(String currentNrp, String newName, String newNrp,
+      String newLevel, String newAndroidID) async {
     String apiUrl = "http://$apiIP:$apiPort/api/user/$currentNrp";
 
-    var body = jsonEncode({"Nama": newName, "NRP": newNrp, "Role": newLevel});
-    print(body);
+    var body = jsonEncode({
+      "Nama": newName,
+      "NRP": newNrp,
+      "Role": newLevel,
+      "android_id": newAndroidID
+    });
+    //print(body);
 
     final response = await http.put(
       Uri.parse(apiUrl),
@@ -850,7 +866,7 @@ class _PageConfigState extends State<PageConfig> {
       },
       body: body,
     );
-    print(response.body);
+    //print(response.body);
 
     if (response.statusCode == 200) {
       //print("Update successful");
@@ -1153,6 +1169,10 @@ class _PageConfigState extends State<PageConfig> {
                   _toggleDataSource(true);
                   fetchDataMP();
                 },
+                style: ButtonStyle(
+                    fixedSize: WidgetStateProperty.all<Size>(
+                  const Size(120.0, 30.0), // Button width and height
+                )),
                 child: const Text('MP'),
               ),
               ElevatedButton(
@@ -1160,6 +1180,11 @@ class _PageConfigState extends State<PageConfig> {
                   _toggleDataSource(false);
                   fetchDataUser();
                 },
+                style: ButtonStyle(
+                  fixedSize: WidgetStateProperty.all<Size>(
+                    const Size(120.0, 30.0), // Button width and height
+                  ),
+                ),
                 child: const Text('User App'),
               ),
             ],
@@ -1177,7 +1202,8 @@ class _PageConfigState extends State<PageConfig> {
                         title: Text(item['nama']),
                         subtitle: _isMPSelected
                             ? Text('(${item['nrp']})\n${item['crew']}')
-                            : Text('(${item['nrp']})\n${item['level']}'),
+                            : Text(
+                                '(${item['nrp']}) - ${item['level']}\n${item['androidID']}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -1188,8 +1214,8 @@ class _PageConfigState extends State<PageConfig> {
                                   _editItemMP(
                                       item['nama'], item['nrp'], item['crew']);
                                 }
-                                _editItemUser(
-                                    item['nama'], item['nrp'], item['level']);
+                                _editItemUser(item['nama'], item['nrp'],
+                                    item['level'], item['androidID']);
                               },
                             ),
                             IconButton(
