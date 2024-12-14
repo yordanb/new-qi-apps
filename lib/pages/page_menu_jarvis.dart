@@ -134,6 +134,7 @@ class _PageJarvisState extends State<PageJarvis> {
                                 _getAvatarColor(snapshot.data![index]['doc']),
                             foregroundColor: Colors.black,
                             child: Text(
+                              //snapshot.data![index]['doc'],
                               snapshot.data![index]['doc'].toString(),
                               style: const TextStyle(
                                 fontSize: 25,
@@ -144,8 +145,13 @@ class _PageJarvisState extends State<PageJarvis> {
                         ),
                         title: Text(
                             '${snapshot.data![index]['no']}. ${snapshot.data![index]['nama']}'),
-                        subtitle: Text(
-                            '(${snapshot.data![index]['nrp']})\n ${snapshot.data![index]['crew']}'),
+                        subtitle: _selectedMenu3 == "plt2"
+                            ? Text(
+                                '(${snapshot.data![index]['nrp']})\n ${snapshot.data![index]['crew']}',
+                              )
+                            : Text(
+                                '(${snapshot.data![index]['nrp']})',
+                              ),
                       );
                     },
                   );
@@ -181,7 +187,7 @@ class _PageJarvisState extends State<PageJarvis> {
 
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
-      print(obj['response']);
+      //print(obj['response']);
       dataCopiedToWA = obj['wa'] ?? ""; // Data yang akan disalin
       return obj['response'];
     } else {
