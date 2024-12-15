@@ -145,6 +145,9 @@ class _PageJarvisState extends State<PageJarvis> {
                         ),
                         title: Text(
                             '${snapshot.data![index]['no']}. ${snapshot.data![index]['nama']}'),
+                        subtitle: Text(
+                            '(${snapshot.data![index]['nrp']})\n ${snapshot.data![index]['crew']}'),
+                        /*
                         subtitle: _selectedMenu3 == "plt2"
                             ? Text(
                                 '(${snapshot.data![index]['nrp']})\n ${snapshot.data![index]['crew']}',
@@ -152,6 +155,7 @@ class _PageJarvisState extends State<PageJarvis> {
                             : Text(
                                 '(${snapshot.data![index]['nrp']})',
                               ),
+                              */
                       );
                     },
                   );

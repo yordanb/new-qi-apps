@@ -142,20 +142,20 @@ class _PageNewsState extends State<PageNews> {
   Color _getBackgroundColor(String seen) {
     try {
       DateTime seenDate = DateTime.parse(seen).toLocal();
-      int todayDate = DateTime.now().day; // Ambil angka tanggal hari ini
-      //print('todaydate : $todayDate');
-      int seenDateNumber = seenDate.day; // Ambil angka tanggal 'seen'
-      //print('seendate : $seenDateNumber');
+      DateTime todayDate =
+          DateTime.now().toLocal(); // Ambil tanggal dan waktu saat ini
 
-      int difference = seenDateNumber - todayDate;
-      //print('hasilnya : $difference');
+      // Hitung selisih hari secara keseluruhan
+      int differenceInDays = seenDate.difference(todayDate).inDays;
 
-      if (difference == 0) {
-        return Colors.green; // Jika 0 hingga -1
-      } else if (difference >= -2 && difference < 0) {
-        return Colors.deepOrange; // Jika -2 hingga -3
+      // Tentukan kategori berdasarkan selisih hari
+      if (differenceInDays == 0) {
+        return Colors.green; // Jika hari yang sama
+      } else if (differenceInDays >= -2 && differenceInDays < 0) {
+        return Colors.deepOrange; // Jika -2 hingga -1 hari
       } else {
-        return Colors.grey; // Jika -3 ke bawah
+        return Colors
+            .grey; // Jika lebih dari -2 hari (termasuk bulan yang berbeda)
       }
     } catch (e) {
       return Colors.red; // Jika terjadi kesalahan parsing

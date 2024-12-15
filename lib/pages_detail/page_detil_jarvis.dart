@@ -11,6 +11,7 @@ class PageDetilJarvis extends StatefulWidget {
   final String crew;
 
   const PageDetilJarvis({super.key, required this.nrp, required this.crew});
+  //const PageDetilJarvis({super.key, required this.nrp});
 
   @override
   _PageDetilJarvisState createState() => _PageDetilJarvisState();
