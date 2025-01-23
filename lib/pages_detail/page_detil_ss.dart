@@ -1,3 +1,4 @@
+//kode ke-2
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -137,7 +138,7 @@ class PageDetilSS extends StatelessWidget {
 
       // Cek apakah data atau field 'update' bernilai null
       if (data == null || data['update'] == null) {
-        return "No Data";
+        return "Maaf Anda belum membuat SS";
       }
 
       return data['update'];
@@ -165,3 +166,4 @@ class PageDetilSS extends StatelessWidget {
     }
   }
 }
+
