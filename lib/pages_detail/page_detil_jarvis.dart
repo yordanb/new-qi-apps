@@ -1,3 +1,4 @@
+//kode ke-4
 //kode ke-3
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -210,7 +211,7 @@ class _PageDetilJarvisState extends State<PageDetilJarvis> {
                     )
                   : const Center(
                       child: Text(
-                        "Belum akses jarvis",
+                        "Maaf Anda belum mengakses jarvis",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.redAccent,
