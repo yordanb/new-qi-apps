@@ -1,3 +1,4 @@
+//kode ke-2
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -30,7 +31,6 @@ class PageDetiliPeak extends StatelessWidget {
           ),
         ),
       ),
-      /*
       body: FutureBuilder<List<dynamic>>(
         future: _fetchDataUsers(),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -57,9 +57,9 @@ class PageDetiliPeak extends StatelessWidget {
                       ),
                     ),
                   ),
-                  title: Text(snapshot.data![index]['Judul']),
+                  title: Text('Judul : ${snapshot.data![index]['judul']}'),
                   subtitle: Text(
-                    'Status : ${snapshot.data![index]['KategoriSS']}\nCreated : ${snapshot.data![index]['TanggalLaporan']}',
+                    'Akses : ${snapshot.data![index]['akses']}', //\nCreated : ${snapshot.data![index]['TanggalLaporan']}',
                   ),
                 );
               },
@@ -67,7 +67,6 @@ class PageDetiliPeak extends StatelessWidget {
           }
         },
       ),
-      */
     );
   }
 
@@ -86,7 +85,7 @@ class PageDetiliPeak extends StatelessWidget {
 
       // Parsing hasil body
       var data = json.decode(result.body);
-      print(result);
+      //print(result);
 
       // Pastikan respons memiliki data yang sesuai
       if (data != null && data['response'] != null) {
@@ -121,7 +120,7 @@ class PageDetiliPeak extends StatelessWidget {
 
       // Cek apakah data atau field 'update' bernilai null
       if (data == null || data['update'] == null) {
-        return "No Data";
+        return "Maaf Anda belum mengakses iPeak";
       }
 
       return data['update'];
@@ -134,12 +133,9 @@ class PageDetiliPeak extends StatelessWidget {
   Color _getAvatarColor(int jmlSS) {
     if (jmlSS < 1) {
       return Colors.redAccent;
-    } else if (jmlSS < 5) {
-      return Colors.yellow;
-    } else if (jmlSS < 6) {
-      return Colors.lightGreen;
     } else {
-      return Colors.lightBlue;
+      return Colors.lightGreen;
     }
   }
 }
+
