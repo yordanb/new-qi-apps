@@ -1,4 +1,4 @@
-//kode ke-3
+//kode ke-4
 import 'package:flutter_rating_bar/flutter_rating_bar.dart'; // Ganti dengan flutter_rating_bar
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -19,6 +19,7 @@ class PageMenuMyacvh extends StatefulWidget {
 class _PageMenuMyacvh extends State<PageMenuMyacvh> {
   late Future<Map<String, dynamic>> futureKPIData;
   late Future<List<Map<String, dynamic>>> futureBarData;
+  String? year = "";
   String? nrp = "";
   String? role = "";
   double rating = 3.5; // Default rating value
@@ -39,7 +40,6 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
       nrp = DBService.get("nrp");
       role = DBService.get("role");
     });
-    //print(nrp);
   }
 
   // Method to show feedback and rating dialog
@@ -153,7 +153,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
               ),
               onPressed: () {
                 // Aksi saat ikon pencarian ditekan
-                print("Search icon pressed");
+                //print("Search icon pressed");
               },
             ),
           IconButton(
@@ -324,7 +324,7 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
                     itemCount: chartDataList.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
-                      String kpiTitle = "SS Yearly 2024";
+                      String kpiTitle = 'SS Yearly $year';
                       List<Map<String, dynamic>> chartData =
                           chartDataList[index]["barChart"];
 
@@ -422,15 +422,20 @@ class _PageMenuMyacvh extends State<PageMenuMyacvh> {
         'Authorization': 'Bearer $userToken',
       },
     );
+    //print(apiUrl);
+    //print(jsonDecode(response.body));
 
     if (response.statusCode == 200) {
       var decodedData = jsonDecode(response.body);
-      print(decodedData);
+      //print(decodedData);
 
       // Extract update value
       if (decodedData.containsKey('update') &&
           decodedData['update'] is String) {
         update = decodedData['update'];
+        var yearString = update.toString();
+        year = RegExp(r'\b\d{4}\b').firstMatch(yearString)?.group(0) ?? '';
+        //print(update);
         nama = decodedData['name'];
         //print(update);
         setState(() {}); // Memicu pembaruan UI
