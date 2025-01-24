@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:new_qi_apps/auth/auth_service.dart';
+
+import '../config/config.dart';
 //import '../config/config.dart'; // Import file config.dart
 
 class PageNews extends StatefulWidget {
@@ -67,7 +69,7 @@ class _PageNewsState extends State<PageNews> {
   }
 
   String _buildApiUrl() {
-    return "http://209.182.237.240:5005/api/log";
+    return "http://$apiIP:$apiPort/api/log";
   }
 
   Future<List<dynamic>> _fetchDataFromApi() async {
@@ -84,26 +86,6 @@ class _PageNewsState extends State<PageNews> {
     if (result.statusCode == 200) {
       var obj = json.decode(result.body);
       return obj['response'];
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
-
-  Future<String> _fetchLastUpdateData() async {
-    String apiUrl = _buildApiUrl();
-
-    var result = await http.get(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (result.statusCode == 200) {
-      var obj = json.decode(result.body);
-      return obj['response'].isNotEmpty
-          ? obj['response'][0]['seen']
-          : 'No Updates';
     } else {
       throw Exception('Failed to load data');
     }
