@@ -422,7 +422,8 @@ class _PageConfigState extends State<PageConfig> {
           .where((item) => item['nrp']
               .toString()
               .toLowerCase()
-              .contains(query.toLowerCase()))
+              .contains(query.toLowerCase())||
+        item['nama'].toString().toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }

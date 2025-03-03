@@ -8,6 +8,7 @@ import '../component/my_button.dart';
 import '../component/my_textfield.dart';
 import '../config/config.dart';
 import '../pages/mainMenu.dart';
+import 'package:flutter/services.dart'; // Import clipboard
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -188,7 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   text: 'Sign Up',
                 ),
                 const SizedBox(height: 30),
-
+/*
                 // Menampilkan Android ID menggunakan FutureBuilder
                 FutureBuilder<String?>(
                   future: _getAndroidId(),
@@ -203,6 +204,45 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Text(
                           'Device ID: ${snapshot.data ?? "Tidak tersedia"}',
                           style: const TextStyle(fontSize: 16),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                */
+                // Menampilkan Android ID menggunakan FutureBuilder
+                FutureBuilder<String?>(
+                  future: _getAndroidId(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(); // Tampilkan loading jika belum selesai
+                    } else if (snapshot.hasError) {
+                      return const Text('Error mendapatkan Android ID');
+                    } else {
+                      String androidId = snapshot.data ?? "Tidak tersedia";
+                      return GestureDetector(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(
+                              text: androidId)); // Salin ke clipboard
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Android ID disalin ke clipboard!')),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            'Device ID: $androidId',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: Colors
+                                  .blue, // Warna teks biru untuk menunjukkan bisa diklik
+                              //decoration: TextDecoration
+                              //    .underline, // Garis bawah agar terlihat seperti tautan
+                            ),
+                          ),
                         ),
                       );
                     }
