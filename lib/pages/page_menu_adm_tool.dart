@@ -1,4 +1,4 @@
-//kode ke-3
+//kode ke-4
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -16,16 +16,23 @@ class PageTool extends StatefulWidget {
 
 class _PageToolState extends State<PageTool> {
   File? _selectedFile;
-  String? _selectedRadio;
+  String? _selectedMenu;
   String _selectedDB = "SS";
+  String _selectedMonth = "01";
   bool _isUploading = false;
 
   final List<String> fileNames = [
     'ss-closed.xlsx',
     'ss-open.xlsx',
+    'ss-ab.xlsx',
     'sap.xlsx',
-    'esic.xlsx',
     'ipeak.xlsx',
+    'esic.xlsx',
+    'esic-mtd.xlsx',
+  ];
+
+  final List<String> monthNumbers = [
+    for (int i = 1; i <= 12; i++) i.toString().padLeft(2, '0')
   ];
 
   Future<void> _pickFile() async {
@@ -38,7 +45,7 @@ class _PageToolState extends State<PageTool> {
   }
 
   Future<void> _uploadFile() async {
-    if (_selectedFile == null || _selectedRadio == null) {
+    if (_selectedFile == null || _selectedMenu == null) {
       Fluttertoast.showToast(msg: 'Please select a file and a name');
       return;
     }
@@ -48,6 +55,11 @@ class _PageToolState extends State<PageTool> {
     });
 
     try {
+      String fileName = _selectedMenu!;
+      if (_selectedMenu == 'esic-mtd.xlsx') {
+        fileName = 'esic-mtd-$_selectedMonth.xlsx';
+      }
+
       var request = http.MultipartRequest(
         'POST',
         Uri.parse('http://$apiIP:8888/'),
@@ -56,7 +68,7 @@ class _PageToolState extends State<PageTool> {
       request.files.add(await http.MultipartFile.fromPath(
         'filetoupload',
         _selectedFile!.path,
-        filename: _selectedRadio!,
+        filename: fileName,
       ));
 
       var response = await request.send();
@@ -95,7 +107,6 @@ class _PageToolState extends State<PageTool> {
     }
   }
 
-  // Method untuk menampilkan konfirmasi dialog
   Future<void> _showConfirmationDialog(String action) async {
     return showDialog<void>(
       context: context,
@@ -132,9 +143,9 @@ class _PageToolState extends State<PageTool> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Upload File"),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back), // Ikon panah kiri
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context, true); // pop dengan result true
+            Navigator.pop(context, true);
           },
         ),
       ),
@@ -154,20 +165,38 @@ class _PageToolState extends State<PageTool> {
                     if (_selectedFile != null) ...[
                       const SizedBox(height: 20),
                       const Text("Choose a name for the file:"),
-                      Column(
-                        children: fileNames.map((fileName) {
-                          return RadioListTile(
-                            title: Text(fileName),
+                      DropdownButton<String>(
+                        value: _selectedMenu,
+                        items: fileNames.map((String fileName) {
+                          return DropdownMenuItem<String>(
                             value: fileName,
-                            groupValue: _selectedRadio,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedRadio = value.toString();
-                              });
-                            },
+                            child: Text(fileName),
                           );
                         }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedMenu = value;
+                          });
+                        },
                       ),
+                      if (_selectedMenu == 'esic-mtd.xlsx') ...[
+                        const SizedBox(height: 10),
+                        const Text("Select Month:"),
+                        DropdownButton<String>(
+                          value: _selectedMonth,
+                          items: monthNumbers.map((String month) {
+                            return DropdownMenuItem<String>(
+                              value: month,
+                              child: Text(month),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedMonth = newValue!;
+                            });
+                          },
+                        ),
+                      ],
                       if (_isUploading) ...[
                         const CircularProgressIndicator(),
                         const SizedBox(height: 20),
@@ -184,7 +213,8 @@ class _PageToolState extends State<PageTool> {
             ),
             DropdownButton<String>(
               value: _selectedDB,
-              items: ['SS', 'SAP', 'ESIC', 'IPEAK'].map((String value) {
+              items:
+                  ['SS', 'SS AB', 'SAP', 'ESIC', 'IPEAK'].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
