@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../pages_detail/page_detil_ipeak.dart'; // Import halaman detail
 import '../config/config.dart';
 import 'package:new_qi_apps/auth/auth_service.dart';
+import '../auth/db_service.dart';
 
 class PageIpeak extends StatefulWidget {
   const PageIpeak({super.key});
@@ -117,6 +118,8 @@ class _PageIpeakState extends State<PageIpeak> {
                       return ListTile(
                         leading: InkWell(
                           onTap: () {
+                            DBService.set(
+                                "nama", snapshot.data![index]['nama']);
                             // Navigasi ke halaman detail dan kirim data NRP
                             Navigator.push(
                               context,

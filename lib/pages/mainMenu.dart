@@ -83,6 +83,7 @@ class _CardExampleState extends State<CardExample> {
       ),
       body: Column(
         children: [
+          //tampilan 4x gauge
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -201,6 +202,7 @@ class _CardExampleState extends State<CardExample> {
               ),
             ),
           ),
+          //tampilan bar chart
           Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: futureBarData,
